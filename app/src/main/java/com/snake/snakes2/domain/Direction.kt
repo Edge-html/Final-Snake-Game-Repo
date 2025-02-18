@@ -1,3 +1,4 @@
+//Directions.kt
 package com.snake.snakes2.domain
 
 enum class Direction(val dx: Int, val dy: Int) {

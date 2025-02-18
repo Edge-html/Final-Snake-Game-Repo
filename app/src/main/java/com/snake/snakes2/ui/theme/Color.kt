@@ -1,3 +1,4 @@
+//Color.kt
 package com.snake.snakes2.ui.theme
 
 import androidx.compose.ui.graphics.Color

@@ -10,7 +10,7 @@ import java.util.Random
 class GameUseCase {
     private val mutex = Mutex()
     private val mutableState = MutableStateFlow(
-        GameState(food = Pair(5, 5), snake = listOf(Pair(7, 7)))
+        GameState(food = Pair(5, 5), snake = listOf(Pair(7, 7)), score = 0)
     )
     val state = mutableState
 
@@ -19,7 +19,7 @@ class GameUseCase {
             field = value
         }
 
-    var speed = 150L  //Initial speed in milliseconds
+    var speed = 150L  // Initial speed in milliseconds
 
     suspend fun updateGame() {
         mutex.withLock {
@@ -31,9 +31,12 @@ class GameUseCase {
             }
 
             val snakeLength = if (newPosition == mutableState.value.food) {
-                //If snake eats food, increase length and speed
+                // If snake eats food, increase length, score, and speed
                 mutableState.update {
-                    it.copy(food = Pair(Random().nextInt(BOARD_SIZE), Random().nextInt(BOARD_SIZE)))
+                    it.copy(
+                        food = Pair(Random().nextInt(BOARD_SIZE), Random().nextInt(BOARD_SIZE)),
+                        score = it.score + 10 // Increase score by 10 points
+                    )
                 }
                 speed = (speed * 0.9).toLong().coerceAtLeast(50L)
                 mutableState.value.snake.size + 1

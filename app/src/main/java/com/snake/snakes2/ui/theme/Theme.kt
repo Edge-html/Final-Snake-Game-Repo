@@ -1,3 +1,4 @@
+//Theme.kt
 package com.snake.snakes2.ui.theme
 
 import android.app.Activity

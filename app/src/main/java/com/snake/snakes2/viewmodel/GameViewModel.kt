@@ -14,7 +14,7 @@ class GameViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             while (true) {
-                delay(gameUseCase.speed) // ✅ Uses dynamic speed
+                delay(gameUseCase.speed)
                 gameUseCase.updateGame()
             }
         }

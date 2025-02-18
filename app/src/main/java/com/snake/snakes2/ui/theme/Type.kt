@@ -1,3 +1,4 @@
+//Type.kt
 package com.snake.snakes2.ui.theme
 
 import androidx.compose.material3.Typography
