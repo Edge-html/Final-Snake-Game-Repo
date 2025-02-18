@@ -1,3 +1,4 @@
+//GameScreen.kt
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,7 +17,10 @@ import com.snake.snakes2.viewmodel.GameViewModel
 fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
     val state = gameViewModel.state.collectAsState()
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.padding(top = 32.dp) // Add top padding here
+    ) {
         Text(
             text = "Score: ${state.value.score}",
             fontSize = 24.sp,
@@ -26,5 +30,6 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
         Controls { gameViewModel.changeDirection(it) }
     }
 }
+
 
 

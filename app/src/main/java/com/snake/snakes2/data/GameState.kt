@@ -1,3 +1,4 @@
+//GameState.kt
 package com.snake.snakes2.data
 
 data class GameState(

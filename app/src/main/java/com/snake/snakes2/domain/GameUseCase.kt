@@ -1,3 +1,4 @@
+//GameUseCase.kt
 package com.snake.snakes2.domain
 
 import com.snake.snakes2.data.GameState
@@ -20,6 +21,7 @@ class GameUseCase {
         }
 
     var speed = 150L  // Initial speed in milliseconds
+    private var fruitsEaten = 0 // Track number of eaten fruits
 
     suspend fun updateGame() {
         mutex.withLock {
@@ -30,22 +32,35 @@ class GameUseCase {
                 )
             }
 
-            val snakeLength = if (newPosition == mutableState.value.food) {
-                // If snake eats food, increase length, score, and speed
+            val isEatingFood = newPosition == mutableState.value.food
+
+            if (isEatingFood) {
+                // Increase fruitsEaten count
+                fruitsEaten++
+
+                // Calculate score per fruit (increments every 5 fruits)
+                val pointsPerFruit = 10 + (fruitsEaten / 5) * 5
+
+                // Update state with new food position, increased score
                 mutableState.update {
                     it.copy(
                         food = Pair(Random().nextInt(BOARD_SIZE), Random().nextInt(BOARD_SIZE)),
-                        score = it.score + 10 // Increase score by 10 points
+                        score = it.score + pointsPerFruit
                     )
                 }
+
+                // Speed up the game gradually
                 speed = (speed * 0.9).toLong().coerceAtLeast(50L)
-                mutableState.value.snake.size + 1
-            } else {
-                mutableState.value.snake.size
             }
 
+            // Update snake's body
+            val newSnake = listOf(newPosition) + mutableState.value.snake
+
+            // If eating food, keep the full length, otherwise remove the last part
+            val updatedSnake = if (isEatingFood) newSnake else newSnake.dropLast(1)
+
             mutableState.update {
-                it.copy(snake = listOf(newPosition) + it.snake.take(snakeLength - 1))
+                it.copy(snake = updatedSnake)
             }
         }
     }
