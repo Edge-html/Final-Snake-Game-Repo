@@ -1,4 +1,4 @@
-package com.snake.snakes2.ui.login
+package com.snake.snakes2
 
 import android.widget.Toast
 import androidx.compose.foundation.Image
@@ -26,9 +26,10 @@ import com.snake.snakes2.ui.theme.Snakes2Theme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
-    val context = LocalContext.current // Required for Toast
+fun SignUpScreen(onSignUpSuccess: () -> Unit, onBackToLogin: () -> Unit) {
+    val context = LocalContext.current
 
+    var name by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -65,7 +66,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // LOGIN BOX
+                // SIGNUP BOX
                 Box(
                     modifier = Modifier
                         .background(Color(0xff242c11).copy(alpha = 0.8f), shape = RoundedCornerShape(20.dp))
@@ -79,20 +80,46 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
                     Column(
                         modifier = Modifier
                             .width(350.dp)
-                            .height(300.dp)
+                            .height(400.dp)
                             .padding(16.dp),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // LOGIN TITLE
+                        // SIGNUP TITLE
                         Text(
-                            text = "LOGIN",
+                            text = "SIGN UP",
                             color = Color.White,
                             fontFamily = inlandersFont,
                             fontSize = 32.sp,
                             letterSpacing = 4.sp,
                             modifier = Modifier.padding(bottom = 30.dp)
                         )
+
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        // NAME FIELD
+                        Text("NAME", color = Color.White, fontSize = 18.sp)
+                        Box(
+                            modifier = Modifier
+                                .width(300.dp)
+                                .height(55.dp)
+                                .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
+                                .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
+                        ) {
+                            TextField(
+                                value = name,
+                                onValueChange = { name = it },
+                                modifier = Modifier.fillMaxSize(),
+                                singleLine = true,
+                                colors = TextFieldDefaults.textFieldColors(
+                                    containerColor = Color.Transparent,
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent
+                                )
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(10.dp))
 
@@ -148,7 +175,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
                     }
                 }
 
-                // BUTTON BELOW LOGIN BOX
+                // BUTTON BELOW SIGNUP BOX
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Box(
@@ -160,32 +187,29 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
                 ) {
                     Button(
                         onClick = {
-                            Toast.makeText(context, "Username: $username, Password: $password", Toast.LENGTH_SHORT).show()
-                            onLoginSuccess() // CALL THE LOGIN FUNCTION TO SWITCH SCREEN
+                            Toast.makeText(context, "Welcome, $name!", Toast.LENGTH_SHORT).show()
+                            onSignUpSuccess() // CALL SIGNUP FUNCTION TO SWITCH SCREEN
                         },
                         modifier = Modifier.fillMaxSize(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                     ) {
-                        Text("PROCEED", color = Color.White, fontSize = 18.sp)
+                        Text("REGISTER", color = Color.White, fontSize = 18.sp)
                     }
                 }
-                // ADD SIGN-UP LINK BELOW BUTTON
+
+                // ADD BACK TO LOGIN LINK BELOW BUTTON
                 Spacer(modifier = Modifier.height(15.dp))
 
                 Text(
-                    text = "Don't have an account? Sign up",
+                    text = "Already have an account? Log in",
                     color = Color.White, // Link color
                     fontSize = 16.sp,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier.clickable {
-                        onSignUpClick() // Navigate to Sign Up Screen
+                        onBackToLogin() // Navigate back to Login Screen
                     }
                 )
             }
         }
     }
-}
-
-fun onSignUpClick() {
-    TODO("Not yet implemented")
 }

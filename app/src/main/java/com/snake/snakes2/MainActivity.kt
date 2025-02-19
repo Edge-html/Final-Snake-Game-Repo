@@ -1,17 +1,13 @@
-//MainActivity.kt
 package com.snake.snakes2
 
-import GameScreen
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.Surface
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.snake.snakes2.ui.login.LoginScreen
 import com.snake.snakes2.ui.theme.Snakes2Theme
-import com.snake.snakes2.viewmodel.GameViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,16 +17,26 @@ class MainActivity : ComponentActivity() {
         setContent {
             Snakes2Theme {
                 Surface {
-                    var isLoggedIn by remember { mutableStateOf(false)}
+                    var isLoggedIn by remember { mutableStateOf(true) }
 
-                    if (isLoggedIn) {
-                        GameScreen(viewModel<GameViewModel>())
+                  //  Log.d("MainActivity", "Current isLoggedIn state: $isLoggedIn")
+
+                    var isLoginScreen by remember { mutableStateOf(true) }
+
+                    if (isLoginScreen) {
+                        LoginScreen(
+                            onLoginSuccess = { isLoggedIn = true },
+                            onSignUpClick = { isLoginScreen = false } // Navigate to SignUpScreen
+                        )
                     } else {
-                        LoginScreen(onLoginSuccess = { isLoggedIn = true })
+                        SignUpScreen(
+                            onSignUpSuccess = { isLoginScreen = true }, // Navigate back after signup
+                            onBackToLogin = { isLoginScreen = true } // Handle back navigation
+                        )
                     }
-
+                    }
                 }
             }
         }
     }
-}
+
