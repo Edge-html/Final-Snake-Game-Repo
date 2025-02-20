@@ -1,3 +1,4 @@
+//MainActivity.kt
 package com.snake.snakes2
 
 import android.os.Bundle
@@ -7,6 +8,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import com.snake.snakes2.ui.login.LoginScreen
+import com.snake.snakes2.ui.game.GameScreen
 import com.snake.snakes2.ui.theme.Snakes2Theme
 
 class MainActivity : ComponentActivity() {
@@ -16,27 +18,25 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             Snakes2Theme {
+                var isGameScreen by remember { mutableStateOf(false) }
+                var isLoginScreen by remember { mutableStateOf(true) }
+
                 Surface {
-                    var isLoggedIn by remember { mutableStateOf(true) }
-
-                  //  Log.d("MainActivity", "Current isLoggedIn state: $isLoggedIn")
-
-                    var isLoginScreen by remember { mutableStateOf(true) }
-
-                    if (isLoginScreen) {
+                    if (isGameScreen) {
+                        // Show the Game Screen after successful login
+                        GameScreen()
+                    } else {
+                        // Show the login screen
                         LoginScreen(
-                            onLoginSuccess = { isLoggedIn = true },
+                            onLoginSuccess = {
+                                isLoginScreen = false
+                                isGameScreen = true // Navigate to the game screen after login
+                            },
                             onSignUpClick = { isLoginScreen = false } // Navigate to SignUpScreen
                         )
-                    } else {
-                        SignUpScreen(
-                            onSignUpSuccess = { isLoginScreen = true }, // Navigate back after signup
-                            onBackToLogin = { isLoginScreen = true } // Handle back navigation
-                        )
-                    }
                     }
                 }
             }
         }
     }
-
+}

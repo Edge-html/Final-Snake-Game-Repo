@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.snake.snakes2.domain.Direction //Import Direction
+import com.snake.snakes2.domain.Direction
 
 @Composable
 fun Controls(onDirectionChange: (Direction) -> Unit) { //Accept Direction

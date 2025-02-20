@@ -20,16 +20,31 @@ class GameUseCase {
             field = value
         }
 
-    var speed = 150L  // Initial speed in milliseconds
-    private var fruitsEaten = 0 // Track number of eaten fruits
+    var speed = 150L
+    private var fruitsEaten = 0
+    private var gameOver = false
 
     suspend fun updateGame() {
+        if (gameOver) return
+
         mutex.withLock {
             val newPosition = mutableState.value.snake.first().let { pos ->
                 Pair(
                     (pos.first + move.dx + BOARD_SIZE) % BOARD_SIZE,
                     (pos.second + move.dy + BOARD_SIZE) % BOARD_SIZE
                 )
+            }
+
+            // Check if mubangga ang snake sa iyang self
+            if (mutableState.value.snake.contains(newPosition)) {
+                gameOver = true // Game over if snake touches its body
+                mutableState.update {
+                    it.copy(
+                        snake = listOf(Pair(7, 7)), // Reset snake position
+                        score = 0 // Reset score
+                    )
+                }
+                return
             }
 
             val isEatingFood = newPosition == mutableState.value.food
@@ -49,14 +64,14 @@ class GameUseCase {
                     )
                 }
 
-                // Speed up the game gradually
+                // Speed up the snake's movements (eyy lezgo)
                 speed = (speed * 0.9).toLong().coerceAtLeast(50L)
             }
 
             // Update snake's body
             val newSnake = listOf(newPosition) + mutableState.value.snake
 
-            // If eating food, keep the full length, otherwise remove the last part
+            // If eating food, keep the full length
             val updatedSnake = if (isEatingFood) newSnake else newSnake.dropLast(1)
 
             mutableState.update {

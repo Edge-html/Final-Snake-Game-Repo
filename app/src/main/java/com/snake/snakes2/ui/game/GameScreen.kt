@@ -21,33 +21,43 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF1E1E1E)), // Dark background for visibility
+            .padding(top = 20.dp), // Adjust top padding
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Score Display
-        Text(
-            text = "Score: ${state.score}",
-            fontSize = 28.sp,
-            color = Color.White,
-            modifier = Modifier.padding(16.dp)
-        )
+        if (state.snake.isEmpty()) {
+            // Show "Game Over" if the snake is empty (game over state)
+            Text(
+                text = "Game Over!",
+                fontSize = 48.sp,
+                color = Color.Red,
+                modifier = Modifier.padding(16.dp)
+            )
+        } else {
+            // Enlarged Game Board (Increased the game area size)
+            Box(
+                modifier = Modifier
+                    .size(500.dp) // Increase the game area size
+                    .background(Color.Black) // Game area background color
+            ) {
+                Log.d("GameScreen", "Rendering Board with state: $state")
+                Board(state) // Ensure Board is implemented correctly
+            }
 
-        // Game Board
-        Box(
-            modifier = Modifier
-                .size(300.dp)
-                .background(Color.Black) // Background to clearly show the board
-        ) {
-            Log.d("GameScreen", "Rendering Board with state: $state")
-            Board(state) // Ensure Board is implemented correctly
-        }
+            // Score Display moved below the game board and above the controls
+            Text(
+                text = "Score: ${state.score}",
+                fontSize = 28.sp,
+                color = Color.Black, // Score color changed to black
+                modifier = Modifier.padding(16.dp)
+            )
 
-        Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
-        // Game Controls
-        Controls { direction ->
-            gameViewModel.changeDirection(direction)
-            Log.d("GameScreen", "Direction changed: $direction")
+            // Game Controls (Direction buttons)
+            Controls { direction ->
+                gameViewModel.changeDirection(direction)
+                Log.d("GameScreen", "Direction changed: $direction")
+            }
         }
     }
 }

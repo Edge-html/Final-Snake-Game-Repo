@@ -1,3 +1,4 @@
+//SignUpScreen.kt
 package com.snake.snakes2
 
 import android.widget.Toast
