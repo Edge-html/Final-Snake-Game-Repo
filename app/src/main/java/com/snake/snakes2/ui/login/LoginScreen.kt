@@ -65,9 +65,10 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
                     text = "Click anywhere to start",
                     color = Color.White,
                     fontSize = 24.sp,
+                    fontFamily = inlandersFont, // Apply your custom font
                     modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(16.dp)
+                        .align(Alignment.BottomCenter)
+                        .padding(40.dp)
                 )
             }
         }
@@ -88,11 +89,13 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
                     modifier = Modifier
                         .size(350.dp)
                         .align(Alignment.TopCenter)
-                        .padding(top = 53.dp)
+                        .padding(top = 10.dp)
                 )
 
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 95.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -100,11 +103,11 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
                         modifier = Modifier
                             .background(Color(0xff242c11).copy(alpha = 0.8f), shape = RoundedCornerShape(20.dp))
                             .border(2.dp, Color.White, shape = RoundedCornerShape(20.dp))
-                            .padding(20.dp)
+                            .padding(10.dp)
                     ) {
                         Column(
                             modifier = Modifier
-                                .width(350.dp)
+                                .width(300.dp)
                                 .height(300.dp)
                                 .padding(16.dp),
                             verticalArrangement = Arrangement.Center,
@@ -116,64 +119,79 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
                                 fontFamily = inlandersFont,
                                 fontSize = 32.sp,
                                 letterSpacing = 4.sp,
-                                modifier = Modifier.padding(bottom = 30.dp)
+                                modifier = Modifier.padding(bottom = 70.dp)
                             )
 
                             Spacer(modifier = Modifier.height(10.dp))
 
-                            // Pre-fill dummy account values (username: user, password: password)
-                            username = "user"
-                            password = "password"
 
                             // USERNAME FIELD
-                            Text("USERNAME", color = Color.White, fontSize = 18.sp)
-                            Box(
+                            Column(
                                 modifier = Modifier
-                                    .width(300.dp)
-                                    .height(55.dp)
-                                    .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
-                                    .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
+                                    .offset(y = (-50).dp) // Move only the USERNAME field up
+                                    .fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally // Keep it centered
                             ) {
-                                TextField(
-                                    value = username,
-                                    onValueChange = { username = it },
-                                    modifier = Modifier.fillMaxSize(),
-                                    singleLine = true,
-                                    colors = TextFieldDefaults.textFieldColors(
-                                        containerColor = Color.Transparent,
-                                        focusedTextColor = Color.White,
-                                        unfocusedTextColor = Color.White,
-                                        focusedIndicatorColor = Color.Transparent,
-                                        unfocusedIndicatorColor = Color.Transparent
+                                Text("USERNAME", color = Color.White, fontSize = 18.sp)
+                                Box(
+                                    modifier = Modifier
+                                        .width(300.dp)
+                                        .height(55.dp)
+                                        .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
+                                        .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
+                                ) {
+                                    TextField(
+                                        value = username,
+                                        onValueChange = { username = it },
+                                        modifier = Modifier.fillMaxSize(),
+                                        singleLine = true,
+                                        placeholder = { Text("Enter a username", color = Color(0xff5e6b38)) },
+                                        colors = TextFieldDefaults.textFieldColors(
+                                            containerColor = Color.Transparent,
+                                            focusedTextColor = Color.White,
+                                            unfocusedTextColor = Color.White,
+                                            focusedIndicatorColor = Color.Transparent,
+                                            unfocusedIndicatorColor = Color.Transparent
+                                        )
                                     )
-                                )
+                                }
                             }
 
-                            Spacer(modifier = Modifier.height(10.dp))
+                            // Adjust spacing between fields
+                            Spacer(modifier = Modifier.height(13.dp))
 
                             // PASSWORD FIELD
-                            Text("PASSWORD", color = Color.White, fontSize = 18.sp)
-                            Box(
+                            Column(
                                 modifier = Modifier
-                                    .width(300.dp)
-                                    .height(55.dp)
-                                    .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
-                                    .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
+                                    .offset(y = (-50).dp) // Move only the PASSWORD field
+                                    .fillMaxWidth(),
+                                horizontalAlignment = Alignment.CenterHorizontally // Keep it centered
                             ) {
-                                TextField(
-                                    value = password,
-                                    onValueChange = { password = it },
-                                    modifier = Modifier.fillMaxSize(),
-                                    singleLine = true,
-                                    colors = TextFieldDefaults.textFieldColors(
-                                        containerColor = Color.Transparent,
-                                        focusedTextColor = Color.White,
-                                        unfocusedTextColor = Color.White,
-                                        focusedIndicatorColor = Color.Transparent,
-                                        unfocusedIndicatorColor = Color.Transparent
+                                Text("PASSWORD", color = Color.White, fontSize = 18.sp)
+                                Box(
+                                    modifier = Modifier
+                                        .width(300.dp)
+                                        .height(55.dp)
+                                        .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
+                                        .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
+                                ) {
+                                    TextField(
+                                        value = password,
+                                        onValueChange = { password = it },
+                                        modifier = Modifier.fillMaxSize(),
+                                        singleLine = true,
+                                        placeholder = { Text("Enter a password", color = Color(0xff5e6b38)) }, // Ensures placeholder visibility
+                                        colors = TextFieldDefaults.textFieldColors(
+                                            containerColor = Color.Transparent,
+                                            focusedTextColor = Color.White,
+                                            unfocusedTextColor = Color.White,
+                                            focusedIndicatorColor = Color.Transparent,
+                                            unfocusedIndicatorColor = Color.Transparent
+                                        )
                                     )
-                                )
+                                }
                             }
+
                         }
                     }
 
@@ -189,7 +207,7 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
                         Button(
                             onClick = {
                                 // Check dummy credentials (username: user, password: password)
-                                if (username == "user" && password == "password") {
+                                if (username == "username" && password == "password") {
                                     isHomeScreen = true // Show home menu
                                 } else {
                                     Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
