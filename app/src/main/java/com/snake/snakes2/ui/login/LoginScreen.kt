@@ -18,19 +18,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.snake.snakes2.R
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.ui.text.input.VisualTransformation
+
 import com.snake.snakes2.ui.theme.Snakes2Theme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
+fun LoginScreen(navController: NavController, onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var isHomeScreen by remember { mutableStateOf(false) }
-    var isStartingScreen by remember { mutableStateOf(true) } // Add state for the starting screen
     val context = LocalContext.current
 
     val inlandersFont = remember {
@@ -41,325 +46,175 @@ fun LoginScreen(onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
         }
     }
 
-    if (isStartingScreen) {
-        // Starting Screen with "Click anywhere to start"
-        Snakes2Theme {
-            Box(modifier = Modifier.fillMaxSize().clickable {
-                isStartingScreen = false // Hide starting screen and show login
-            }) {
-                Image(
-                    painter = painterResource(id = R.drawable.snakedash),
-                    contentDescription = "Background Image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.sdlogofinal),
-                    contentDescription = "Logo",
-                    modifier = Modifier
-                        .size(350.dp)
-                        .align(Alignment.TopCenter)
-                        .padding(top = 53.dp)
-                )
-                Text(
-                    text = "Click anywhere to start",
-                    color = Color.White,
-                    fontSize = 24.sp,
-                    fontFamily = inlandersFont, // Apply your custom font
-                    modifier = Modifier
-                        .align(Alignment.BottomCenter)
-                        .padding(40.dp)
-                )
-            }
-        }
-    } else if (!isHomeScreen) {
-        // Login Form Screen
-        Snakes2Theme {
-            Box(modifier = Modifier.fillMaxSize()) {
-                Image(
-                    painter = painterResource(id = R.drawable.snakedash),
-                    contentDescription = "Background Image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
+    // 🔥 Login Form Screen (Landing screen has been removed)
+    Snakes2Theme {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Image(
+                painter = painterResource(id = R.drawable.snakedash),
+                contentDescription = "Background Image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize()
+            )
 
-                Image(
-                    painter = painterResource(id = R.drawable.sdlogofinal),
-                    contentDescription = "Logo",
-                    modifier = Modifier
-                        .size(350.dp)
-                        .align(Alignment.TopCenter)
-                        .padding(top = 10.dp)
-                )
+            Image(
+                painter = painterResource(id = R.drawable.sdlogofinal),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .size(350.dp)
+                    .align(Alignment.TopCenter)
+                    .padding(top = 10.dp)
+            )
 
-                Column(
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 95.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(top = 95.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .background(Color(0xff242c11).copy(alpha = 0.8f), shape = RoundedCornerShape(20.dp))
+                        .border(2.dp, Color.White, shape = RoundedCornerShape(20.dp))
+                        .padding(10.dp)
                 ) {
-                    Box(
+                    Column(
                         modifier = Modifier
-                            .background(Color(0xff242c11).copy(alpha = 0.8f), shape = RoundedCornerShape(20.dp))
-                            .border(2.dp, Color.White, shape = RoundedCornerShape(20.dp))
-                            .padding(10.dp)
+                            .width(300.dp)
+                            .wrapContentHeight() // 🔥 Fix: Allow the column to expand instead of cutting off content
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Column(
+                        Text(
+                            text = "LOGIN",
+                            color = Color.White,
+                            fontFamily = inlandersFont,
+                            fontSize = 32.sp,
+                            letterSpacing = 4.sp,
+                            modifier = Modifier.padding(bottom = 20.dp) // 🔥 Reduced padding to give more space
+                        )
+
+                        // Common modifier for uniform size
+                        val textFieldSizeModifier = Modifier
+                            .width(300.dp)
+                            .height(55.dp)
+
+                        // USERNAME FIELD
+                        Text(
+                            text = "USERNAME",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Box(
                             modifier = Modifier
-                                .width(300.dp)
-                                .height(300.dp)
-                                .padding(16.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
+                                .align(Alignment.CenterHorizontally)
+                                .then(textFieldSizeModifier)
+                                .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp)) // Same as "PROCEED" button
+                                .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
                         ) {
-                            Text(
-                                text = "LOGIN",
-                                color = Color.White,
-                                fontFamily = inlandersFont,
-                                fontSize = 32.sp,
-                                letterSpacing = 4.sp,
-                                modifier = Modifier.padding(bottom = 70.dp)
+                            TextField(
+                                value = username,
+                                onValueChange = { username = it },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                placeholder = { Text("Enter a username", color = Color.White.copy(alpha = 0.6f)) },
+                                colors = TextFieldDefaults.textFieldColors(
+                                    containerColor = Color.Transparent,
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent
+                                )
                             )
-
-                            Spacer(modifier = Modifier.height(10.dp))
-
-
-                            // USERNAME FIELD
-                            Column(
-                                modifier = Modifier
-                                    .offset(y = (-50).dp) // Move only the USERNAME field up
-                                    .fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally // Keep it centered
-                            ) {
-                                Text("USERNAME", color = Color.White, fontSize = 18.sp)
-                                Box(
-                                    modifier = Modifier
-                                        .width(300.dp)
-                                        .height(55.dp)
-                                        .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
-                                        .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
-                                ) {
-                                    TextField(
-                                        value = username,
-                                        onValueChange = { username = it },
-                                        modifier = Modifier.fillMaxSize(),
-                                        singleLine = true,
-                                        placeholder = { Text("Enter a username", color = Color(0xff5e6b38)) },
-                                        colors = TextFieldDefaults.textFieldColors(
-                                            containerColor = Color.Transparent,
-                                            focusedTextColor = Color.White,
-                                            unfocusedTextColor = Color.White,
-                                            focusedIndicatorColor = Color.Transparent,
-                                            unfocusedIndicatorColor = Color.Transparent
-                                        )
-                                    )
-                                }
-                            }
-
-                            // Adjust spacing between fields
-                            Spacer(modifier = Modifier.height(13.dp))
-
-                            // PASSWORD FIELD
-                            Column(
-                                modifier = Modifier
-                                    .offset(y = (-50).dp) // Move only the PASSWORD field
-                                    .fillMaxWidth(),
-                                horizontalAlignment = Alignment.CenterHorizontally // Keep it centered
-                            ) {
-                                Text("PASSWORD", color = Color.White, fontSize = 18.sp)
-                                Box(
-                                    modifier = Modifier
-                                        .width(300.dp)
-                                        .height(55.dp)
-                                        .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
-                                        .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
-                                ) {
-                                    TextField(
-                                        value = password,
-                                        onValueChange = { password = it },
-                                        modifier = Modifier.fillMaxSize(),
-                                        singleLine = true,
-                                        placeholder = { Text("Enter a password", color = Color(0xff5e6b38)) }, // Ensures placeholder visibility
-                                        colors = TextFieldDefaults.textFieldColors(
-                                            containerColor = Color.Transparent,
-                                            focusedTextColor = Color.White,
-                                            unfocusedTextColor = Color.White,
-                                            focusedIndicatorColor = Color.Transparent,
-                                            unfocusedIndicatorColor = Color.Transparent
-                                        )
-                                    )
-                                }
-                            }
-
                         }
-                    }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                        Spacer(modifier = Modifier.height(15.dp)) // 🔥 Added extra space
 
-                    Box(
-                        modifier = Modifier
-                            .width(220.dp)
-                            .height(55.dp)
-                            .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
-                            .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
-                    ) {
-                        Button(
-                            onClick = {
-                                // Check dummy credentials (username: user, password: password)
-                                if (username == "username" && password == "password") {
-                                    isHomeScreen = true // Show home menu
-                                } else {
-                                    Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
-                                }
-                            },
-                            modifier = Modifier.fillMaxSize(),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+                        // PASSWORD FIELD
+                        Text(
+                            text = "PASSWORD",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                        Spacer(modifier = Modifier.height(5.dp))
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .then(textFieldSizeModifier)
+                                .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp)) // Same as "PROCEED" button
+                                .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
                         ) {
-                            Text("PROCEED", color = Color.White, fontSize = 18.sp)
+                            var passwordVisible by remember { mutableStateOf(false) } // Correct state handling
+
+                            TextField(
+                                value = password,
+                                onValueChange = { password = it },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                placeholder = { Text(text = "Enter a password", color = Color.White.copy(alpha = 0.6f)) },
+                                colors = TextFieldDefaults.textFieldColors(
+                                    containerColor = Color.Transparent,
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent
+                                ),
+                                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                                trailingIcon = {
+                                    val image = if (passwordVisible) R.drawable.visibilityon else R.drawable.visibilityoff
+
+                                    IconButton(onClick = { passwordVisible = !passwordVisible }) { // ✅ Correct toggle logic
+                                        Icon(
+                                            painter = painterResource(id = image),
+                                            contentDescription = "Toggle Password Visibility",
+                                            tint = Color.White
+                                        )
+                                    }
+                                }
+                            )
                         }
                     }
-
-                    Spacer(modifier = Modifier.height(15.dp))
-
-                    Text(
-                        text = "Don't have an account? Sign up",
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        textDecoration = TextDecoration.Underline,
-                        modifier = Modifier.clickable {
-                            onSignUpClick() // Navigate to Sign Up Screen
-                        }
-                    )
                 }
-            }
-        }
-    } else {
-        // Home Menu Screen
-        Snakes2Theme {
-            Box(modifier = Modifier.fillMaxSize()) {
-                Image(
-                    painter = painterResource(id = R.drawable.snakedash),
-                    contentDescription = "Background Image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize()
-                )
 
-                Image(
-                    painter = painterResource(id = R.drawable.sdlogofinal),
-                    contentDescription = "Logo",
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Box(
                     modifier = Modifier
-                        .size(350.dp)
-                        .align(Alignment.TopCenter)
-                        .padding(top = 53.dp)
-                )
-
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .width(220.dp)
+                        .height(55.dp)
+                        .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
+                        .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
                 ) {
-                    // Start Game Button
-                    Box(
-                        modifier = Modifier
-                            .width(250.dp)
-                            .height(55.dp)
-                            .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
-                            .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
+                    Button(
+                        onClick = {
+                            if (username == "username" && password == "password") {
+                                navController.navigate("gameScreen")
+                            } else {
+                                Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
+                            }
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
                     ) {
-                        Button(
-                            onClick = { onLoginSuccess() }, // Proceed to the game screen
-                            modifier = Modifier.fillMaxSize(),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-                        ) {
-                            Text("START GAME", color = Color.White, fontSize = 18.sp)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // Resume Game Button
-                    Box(
-                        modifier = Modifier
-                            .width(250.dp)
-                            .height(55.dp)
-                            .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
-                            .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
-                    ) {
-                        Button(
-                            onClick = {
-                                Toast.makeText(context, "Resuming Game", Toast.LENGTH_SHORT).show()
-                            },
-                            modifier = Modifier.fillMaxSize(),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-                        ) {
-                            Text("RESUME GAME", color = Color.White, fontSize = 18.sp)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // Leaderboards Button
-                    Box(
-                        modifier = Modifier
-                            .width(250.dp)
-                            .height(55.dp)
-                            .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
-                            .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
-                    ) {
-                        Button(
-                            onClick = {
-                                Toast.makeText(context, "Resuming Game", Toast.LENGTH_SHORT).show()
-                            },
-                            modifier = Modifier.fillMaxSize(),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-                        ) {
-                            Text("LEADERBOARDS", color = Color.White, fontSize = 18.sp)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // Settings Button
-                    Box(
-                        modifier = Modifier
-                            .width(250.dp)
-                            .height(55.dp)
-                            .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
-                            .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
-                    ) {
-                        Button(
-                            onClick = {
-                                Toast.makeText(context, "Opening Settings", Toast.LENGTH_SHORT).show()
-                            },
-                            modifier = Modifier.fillMaxSize(),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-                        ) {
-                            Text("SETTINGS", color = Color.White, fontSize = 18.sp)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // Logout Button
-                    Box(
-                        modifier = Modifier
-                            .width(250.dp)
-                            .height(55.dp)
-                            .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
-                            .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
-                    ) {
-                        Button(
-                            onClick = {
-                                Toast.makeText(context, "Logging out", Toast.LENGTH_SHORT).show()
-                            },
-                            modifier = Modifier.fillMaxSize(),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
-                        ) {
-                            Text("LOGOUT", color = Color.White, fontSize = 18.sp)
-                        }
+                        Text("PROCEED", color = Color.White, fontSize = 18.sp)
                     }
                 }
+
+                Spacer(modifier = Modifier.height(15.dp))
+
+                Text(
+                    text = "Don't have an account? Sign up",
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    textDecoration = TextDecoration.Underline,
+                    modifier = Modifier.clickable {
+                        navController.navigate("signUpScreen") // 🔥 Navigate to SignUpScreen correctly
+                    }
+                )
             }
         }
     }
