@@ -2,6 +2,7 @@ package com.snake.snakes2.ui.game
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -25,62 +26,54 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp), // ✅ Added padding to prevent edge-to-edge layout
+            .background(Color(0xff242c11))
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // 🔹 Top Image (sdlogobg.jpg) with white border
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .border(4.dp, Color.White) // ✅ White border around the image
+        BoxWithConstraints(
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.sdlogobg),
-                contentDescription = "Game Logo Background",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-        }
-
-        Spacer(modifier = Modifier.height(12.dp)) // ✅ Space between sections
-
-        // 🔹 Bottom Image (gamescreenbg.jpg) as background with white border
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(300.dp)
-                .border(4.dp, Color.White) // ✅ White border around the image
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.gamescreenbg),
-                contentDescription = "Game Background",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-
-            // 🔹 Game Board OVER `gamescreenbg.jpg`
+            val imageMaxWidth = maxWidth - 16.dp
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp) // ✅ Space inside the image
+                    .width(imageMaxWidth)
+                    .height(150.dp)
+                    .border(4.dp, Color.White) // White border around the image
+                    .padding(10.dp)
             ) {
-                Log.d("GameScreen", "Rendering Board with state: $state")
-                Board(state) // ✅ Game board is now placed over `gamescreenbg.jpg`
+                Image(
+                    painter = painterResource(id = R.drawable.sdlogobg),
+                    contentDescription = "Game Logo Background",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.fillMaxSize() // Ensure the image fills the box
+                )
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp)) // ✅ Space before the score section
+        Spacer(modifier = Modifier.height(12.dp)) // Space between sections
+
+        // 🔹 Game Board placed over `gamescreenbg.jpg`
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Log.d("GameScreen", "Rendering Board with state: $state")
+            Board(state) // Game board is now placed over `gamescreenbg.jpg`
+        }
+
+        Spacer(modifier = Modifier.height(16.dp)) // Space before the score section
 
         // 🔹 Score Display below the game board
         Text(
             text = "Score: ${state.score}",
             fontSize = 28.sp,
-            color = Color.White, // ✅ Adjusted color for better visibility
+            color = Color.White, // Adjusted color for better visibility
             modifier = Modifier.padding(8.dp)
         )
 
-        Spacer(modifier = Modifier.height(20.dp)) // ✅ Space before the controls
+        Spacer(modifier = Modifier.height(20.dp)) // Space before the controls
 
         // 🔹 Game Controls (Direction buttons)
         Controls { direction ->
@@ -89,3 +82,4 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel()) {
         }
     }
 }
+

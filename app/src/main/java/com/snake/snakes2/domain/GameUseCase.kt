@@ -35,7 +35,7 @@ class GameUseCase {
                 )
             }
 
-            // Check if mubangga ang snake sa iyang self
+            // Check if the snake hits itself
             if (mutableState.value.snake.contains(newPosition)) {
                 gameOver = true // Game over if snake touches its body
                 mutableState.update {
@@ -59,12 +59,12 @@ class GameUseCase {
                 // Update state with new food position, increased score
                 mutableState.update {
                     it.copy(
-                        food = Pair(Random().nextInt(BOARD_SIZE), Random().nextInt(BOARD_SIZE)),
+                        food = Pair(Random().nextInt(BOARD_SIZE), Random().nextInt(BOARD_SIZE)), // New food
                         score = it.score + pointsPerFruit
                     )
                 }
 
-                // Speed up the snake's movements (eyy lezgo)
+                // Speed up the snake's movements
                 speed = (speed * 0.9).toLong().coerceAtLeast(50L)
             }
 
