@@ -1,3 +1,4 @@
+//home/LandingScreen.kt
 package com.snake.snakes2.ui.home
 
 import androidx.compose.foundation.Image

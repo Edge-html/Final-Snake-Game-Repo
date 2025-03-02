@@ -1,3 +1,4 @@
+//LoginScreen.kt
 package com.snake.snakes2.ui.login
 
 import android.widget.Toast

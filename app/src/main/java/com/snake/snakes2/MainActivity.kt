@@ -1,3 +1,4 @@
+//MainActivity.kt
 package com.snake.snakes2
 
 import android.os.Bundle
@@ -33,7 +34,6 @@ class MainActivity : ComponentActivity() {
                     } else {
                         // Handle navigation for login/signup
                         NavHost(navController = navController, startDestination = "landingScreen") {
-
                             // 🔹 Landing Screen
                             composable("landingScreen") {
                                 LandingScreen(navController = navController) // ✅ Navigate to LoginScreen when clicked

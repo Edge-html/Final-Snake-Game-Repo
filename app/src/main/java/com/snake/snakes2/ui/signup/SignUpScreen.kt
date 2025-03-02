@@ -30,6 +30,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import com.snake.snakes2.ui.theme.Snakes2Theme
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,6 +39,7 @@ fun SignUpScreen(navController: NavController,  onSignUpSuccess: () -> Unit, onB
     val context = LocalContext.current
 
     var name by remember { mutableStateOf("") }
+    var mail by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -47,6 +50,9 @@ fun SignUpScreen(navController: NavController,  onSignUpSuccess: () -> Unit, onB
             FontFamily.Default
         }
     }
+
+    // Firestore reference
+    val db = FirebaseFirestore.getInstance()
 
     Snakes2Theme {
         Box(
@@ -140,6 +146,37 @@ fun SignUpScreen(navController: NavController,  onSignUpSuccess: () -> Unit, onB
                                 )
                             )
                         }
+                        Text(
+                            text = "EMAIL",
+                            color = Color.White,
+                            fontSize = 18.sp,
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+
+                        Spacer(modifier = Modifier.height(5.dp))
+
+                        Box(
+                            modifier = Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .then(textFieldSizeModifier)
+                                .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp)) // Same as "PROCEED" button
+                                .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
+                        ) {
+                            TextField(
+                                value = mail,
+                                onValueChange = { mail = it },
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                placeholder = { Text("Enter your email", color = Color.White.copy(alpha = 0.6f)) },
+                                colors = TextFieldDefaults.textFieldColors(
+                                    containerColor = Color.Transparent,
+                                    focusedTextColor = Color.White,
+                                    unfocusedTextColor = Color.White,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    unfocusedIndicatorColor = Color.Transparent
+                                )
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(15.dp))
 
@@ -160,6 +197,7 @@ fun SignUpScreen(navController: NavController,  onSignUpSuccess: () -> Unit, onB
                                 .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp)) // Same as "PROCEED" button
                                 .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
                         ) {
+
                             TextField(
                                 value = username,
                                 onValueChange = { username = it },
@@ -239,8 +277,22 @@ fun SignUpScreen(navController: NavController,  onSignUpSuccess: () -> Unit, onB
                 ) {
                     Button(
                         onClick = {
-                            Toast.makeText(context, "Welcome, $name!", Toast.LENGTH_SHORT).show()
-                            onSignUpSuccess() // CALL SIGNUP FUNCTION TO SWITCH SCREEN
+                            // Save to Firestore
+                            val user = hashMapOf(
+                                "Username" to username,
+                                "email" to name, // Email should be in the "name" field if that's what is expected
+                                "password" to password
+                            )
+
+                            db.collection("users")
+                                .add(user)
+                                .addOnSuccessListener {
+                                    Toast.makeText(context, "User Registered!", Toast.LENGTH_SHORT).show()
+                                    onSignUpSuccess() // Navigate after success
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                                }
                         },
                         modifier = Modifier.fillMaxSize(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
