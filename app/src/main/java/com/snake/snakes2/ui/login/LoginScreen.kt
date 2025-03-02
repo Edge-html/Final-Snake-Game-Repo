@@ -1,4 +1,3 @@
-//LoginScreen.kt
 package com.snake.snakes2.ui.login
 
 import android.widget.Toast
@@ -20,21 +19,18 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.snake.snakes2.R
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.ui.text.input.VisualTransformation
 import com.snake.snakes2.ui.theme.Snakes2Theme
 import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(navController: NavController, onLoginSuccess: () -> Unit, onSignUpClick: () -> Unit) {
+fun LoginScreen(navController: NavController, onLoginSuccess: (Any?) -> Unit, onSignUpClick: () -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -50,7 +46,6 @@ fun LoginScreen(navController: NavController, onLoginSuccess: () -> Unit, onSign
     // Firestore reference
     val db = FirebaseFirestore.getInstance()
 
-    // 🔥 Login Form Screen (Landing screen has been removed)
     Snakes2Theme {
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
@@ -96,7 +91,7 @@ fun LoginScreen(navController: NavController, onLoginSuccess: () -> Unit, onSign
                             fontFamily = inlandersFont,
                             fontSize = 32.sp,
                             letterSpacing = 4.sp,
-                            modifier = Modifier.padding(bottom = 20.dp) // Reduced padding to give more space
+                            modifier = Modifier.padding(bottom = 20.dp)
                         )
 
                         val textFieldSizeModifier = Modifier
@@ -202,7 +197,9 @@ fun LoginScreen(navController: NavController, onLoginSuccess: () -> Unit, onSign
                                 .addOnSuccessListener { documents ->
                                     if (!documents.isEmpty) {
                                         // Credentials match, proceed to the HomeScreen
-                                        navController.navigate("homeScreen")
+                                        val user = documents.first()
+                                        val loggedInUsername = user.getString("Username") ?: ""
+                                        navController.navigate("homeScreen/$loggedInUsername")
                                     } else {
                                         // Invalid credentials
                                         Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
