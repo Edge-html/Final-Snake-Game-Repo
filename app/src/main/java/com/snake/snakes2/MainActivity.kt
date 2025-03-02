@@ -1,4 +1,3 @@
-//MainActivity.kt
 package com.snake.snakes2
 
 import android.os.Bundle
@@ -13,6 +12,7 @@ import androidx.navigation.compose.composable
 import com.snake.snakes2.ui.login.LoginScreen
 import com.snake.snakes2.ui.signup.SignUpScreen
 import com.snake.snakes2.ui.game.GameScreen
+import com.snake.snakes2.ui.game.HomeScreen
 import com.snake.snakes2.ui.home.LandingScreen
 import com.snake.snakes2.ui.theme.Snakes2Theme
 
@@ -24,43 +24,51 @@ class MainActivity : ComponentActivity() {
         setContent {
             Snakes2Theme {
                 val navController = rememberNavController() // Initialize navigation controller
-                var isGameScreen by remember { mutableStateOf(false) }
-                var isLoginScreen by remember { mutableStateOf(true) }
 
                 Surface {
-                    if (isGameScreen) {
-                        // Show the Game Screen after successful login
-                        GameScreen()
-                    } else {
-                        // Handle navigation for login/signup
-                        NavHost(navController = navController, startDestination = "landingScreen") {
-                            // 🔹 Landing Screen
-                            composable("landingScreen") {
-                                LandingScreen(navController = navController) // ✅ Navigate to LoginScreen when clicked
-                            }
+                    // Define the NavHost with the HomeScreen after login
+                    NavHost(navController = navController, startDestination = "landingScreen") {
+                        // 🔹 Landing Screen
+                        composable("landingScreen") {
+                            LandingScreen(navController = navController) // Navigate to LoginScreen when clicked
+                        }
 
-                            // 🔹 Login Screen
-                            composable("loginScreen") {
-                                LoginScreen(
-                                    navController = navController, // Pass navController
-                                    onLoginSuccess = { navController.navigate("gameScreen")},
-                                    onSignUpClick = { navController.navigate("signUpScreen") } // Navigate to SignUpScreen
-                                )
-                            }
+                        // 🔹 Login Screen
+                        composable("loginScreen") {
+                            LoginScreen(
+                                navController = navController, // Pass navController
+                                onLoginSuccess = {
+                                    // Navigate to HomeScreen after successful login
+                                    navController.navigate("homeScreen") {
+                                        // This ensures that after navigating to HomeScreen, the user can't go back to the LoginScreen
+                                        popUpTo("loginScreen") { inclusive = true }
+                                    }
+                                },
+                                onSignUpClick = { navController.navigate("signUpScreen") } // Navigate to SignUpScreen
+                            )
+                        }
 
-                            // 🔹 Sign-Up Screen
-                            composable("signUpScreen") {
-                                SignUpScreen(
-                                    navController = navController, // Pass navController
-                                    onSignUpSuccess = { navController.navigate("loginScreen") }, // Navigate to LoginScreen after successful sign-up
-                                    onBackToLogin = { navController.navigate("loginScreen") } // Navigate to LoginScreen when clicking "Already have an account? Log in"
-                                )
-                            }
+                        // 🔹 Sign-Up Screen
+                        composable("signUpScreen") {
+                            SignUpScreen(
+                                navController = navController, // Pass navController
+                                onSignUpSuccess = {
+                                    navController.navigate("loginScreen") // Navigate to LoginScreen after successful sign-up
+                                },
+                                onBackToLogin = {
+                                    navController.navigate("loginScreen") // Navigate to LoginScreen when clicking "Already have an account? Log in"
+                                }
+                            )
+                        }
 
-                            // 🔹 Game Screen (Ensure it's included in the NavHost)
-                            composable("gameScreen") {
-                                GameScreen() // ✅ Ensure this is included
-                            }
+                        // 🔹 Home Screen (This will be displayed after a successful login)
+                        composable("homeScreen") {
+                            HomeScreen(navController = navController) // Navigate to the home screen after login
+                        }
+
+                        // 🔹 Game Screen
+                        composable("gameScreen") {
+                            GameScreen() // Navigate to GameScreen when required
                         }
                     }
                 }

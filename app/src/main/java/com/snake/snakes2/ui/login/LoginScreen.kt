@@ -1,4 +1,3 @@
-//LoginScreen.kt
 package com.snake.snakes2.ui.login
 
 import android.widget.Toast
@@ -29,8 +28,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.ui.text.input.VisualTransformation
-
 import com.snake.snakes2.ui.theme.Snakes2Theme
+import com.google.firebase.firestore.FirebaseFirestore
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,6 +45,9 @@ fun LoginScreen(navController: NavController, onLoginSuccess: () -> Unit, onSign
             FontFamily.Default
         }
     }
+
+    // Firestore reference
+    val db = FirebaseFirestore.getInstance()
 
     // 🔥 Login Form Screen (Landing screen has been removed)
     Snakes2Theme {
@@ -82,7 +84,7 @@ fun LoginScreen(navController: NavController, onLoginSuccess: () -> Unit, onSign
                     Column(
                         modifier = Modifier
                             .width(300.dp)
-                            .wrapContentHeight() // 🔥 Fix: Allow the column to expand instead of cutting off content
+                            .wrapContentHeight() // Allow the column to expand instead of cutting off content
                             .padding(16.dp),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
@@ -93,10 +95,9 @@ fun LoginScreen(navController: NavController, onLoginSuccess: () -> Unit, onSign
                             fontFamily = inlandersFont,
                             fontSize = 32.sp,
                             letterSpacing = 4.sp,
-                            modifier = Modifier.padding(bottom = 20.dp) // 🔥 Reduced padding to give more space
+                            modifier = Modifier.padding(bottom = 20.dp) // Reduced padding to give more space
                         )
 
-                        // Common modifier for uniform size
                         val textFieldSizeModifier = Modifier
                             .width(300.dp)
                             .height(55.dp)
@@ -132,7 +133,7 @@ fun LoginScreen(navController: NavController, onLoginSuccess: () -> Unit, onSign
                             )
                         }
 
-                        Spacer(modifier = Modifier.height(15.dp)) // 🔥 Added extra space
+                        Spacer(modifier = Modifier.height(15.dp)) // Added extra space
 
                         // PASSWORD FIELD
                         Text(
@@ -149,7 +150,7 @@ fun LoginScreen(navController: NavController, onLoginSuccess: () -> Unit, onSign
                                 .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp)) // Same as "PROCEED" button
                                 .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
                         ) {
-                            var passwordVisible by remember { mutableStateOf(false) } // Correct state handling
+                            var passwordVisible by remember { mutableStateOf(false) }
 
                             TextField(
                                 value = password,
@@ -168,7 +169,7 @@ fun LoginScreen(navController: NavController, onLoginSuccess: () -> Unit, onSign
                                 trailingIcon = {
                                     val image = if (passwordVisible) R.drawable.visibilityon else R.drawable.visibilityoff
 
-                                    IconButton(onClick = { passwordVisible = !passwordVisible }) { // ✅ Correct toggle logic
+                                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
                                         Icon(
                                             painter = painterResource(id = image),
                                             contentDescription = "Toggle Password Visibility",
@@ -192,11 +193,23 @@ fun LoginScreen(navController: NavController, onLoginSuccess: () -> Unit, onSign
                 ) {
                     Button(
                         onClick = {
-                            if (username == "username" && password == "password") {
-                                navController.navigate("gameScreen")
-                            } else {
-                                Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
-                            }
+                            // Firestore: Check if credentials match
+                            db.collection("users")
+                                .whereEqualTo("Username", username)
+                                .whereEqualTo("password", password)
+                                .get()
+                                .addOnSuccessListener { documents ->
+                                    if (!documents.isEmpty) {
+                                        // Credentials match, proceed to the HomeScreen
+                                        navController.navigate("homeScreen")
+                                    } else {
+                                        // Invalid credentials
+                                        Toast.makeText(context, "Invalid credentials", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
+                                .addOnFailureListener {
+                                    Toast.makeText(context, "Error: ${it.message}", Toast.LENGTH_SHORT).show()
+                                }
                         },
                         modifier = Modifier.fillMaxSize(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
@@ -213,7 +226,7 @@ fun LoginScreen(navController: NavController, onLoginSuccess: () -> Unit, onSign
                     fontSize = 16.sp,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier.clickable {
-                        navController.navigate("signUpScreen") // 🔥 Navigate to SignUpScreen correctly
+                        navController.navigate("signUpScreen")
                     }
                 )
             }
