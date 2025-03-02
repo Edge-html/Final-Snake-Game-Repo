@@ -281,7 +281,8 @@ fun SignUpScreen(navController: NavController,  onSignUpSuccess: () -> Unit, onB
                             val user = hashMapOf(
                                 "Username" to username,
                                 "email" to name, // Email should be in the "name" field if that's what is expected
-                                "password" to password
+                                "password" to password,
+                                "score" to 0 // Default score value of 0
                             )
 
                             db.collection("users")

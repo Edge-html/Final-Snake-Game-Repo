@@ -1,3 +1,4 @@
+//MainActivity.kt
 package com.snake.snakes2
 
 import android.os.Bundle
