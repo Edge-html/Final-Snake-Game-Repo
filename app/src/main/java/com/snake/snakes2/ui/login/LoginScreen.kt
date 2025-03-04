@@ -225,9 +225,14 @@ fun LoginScreen(navController: NavController, onLoginSuccess: (Any?) -> Unit, on
                     fontSize = 16.sp,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier.clickable {
-                        navController.navigate("signUpScreen")
+                        // Navigate to the SignUpScreen without creating duplicate instances
+                        navController.navigate("signUpScreen") {
+                            popUpTo("loginScreen") { inclusive = false }
+                            launchSingleTop = true
+                        }
                     }
                 )
+
             }
         }
     }

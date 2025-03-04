@@ -26,9 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.snake.snakes2.R
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import com.snake.snakes2.ui.theme.Snakes2Theme
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -111,25 +108,43 @@ fun SignUpScreen(navController: NavController, onSignUpSuccess: () -> Unit, onBa
 
                         Text("USERNAME", color = Color.White, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-                        StyledTextField(username, "Enter a username") { username = it }
+                        StyledTextField(username, "Enter a username") {
+                            val it = ""
+                            username = it
+                        }
 
                         Spacer(modifier = Modifier.height(10.dp))
 
                         Text("EMAIL", color = Color.White, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-                        StyledTextField(mail, "Enter your email") { mail = it }
+                        StyledTextField(mail, "Enter your email") {
+                            val it = ""
+                            mail = it
+                        }
 
                         Spacer(modifier = Modifier.height(15.dp))
 
                         Text("PASSWORD", color = Color.White, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-                        PasswordField("Enter a password", password, { password = it }, passwordVisible, { passwordVisible = it })
+                        PasswordField(
+                            "Enter a password",
+                            password,
+                            { password = it },
+                            passwordVisible,
+                            { passwordVisible = it }
+                        )
 
                         Spacer(modifier = Modifier.height(15.dp))
 
                         Text("CONFIRM PASSWORD", color = Color.White, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-                        PasswordField("Confirm your password", confirmPassword, { confirmPassword = it }, confirmPasswordVisible, { confirmPasswordVisible = it })
+                        PasswordField(
+                            "Confirm your password",
+                            confirmPassword,
+                            { confirmPassword = it },
+                            confirmPasswordVisible,
+                            { confirmPasswordVisible = it }
+                        )
                     }
                 }
 
@@ -181,8 +196,12 @@ fun SignUpScreen(navController: NavController, onSignUpSuccess: () -> Unit, onBa
                     color = Color.White,
                     fontSize = 16.sp,
                     textDecoration = TextDecoration.Underline,
-                    modifier = Modifier.clickable { onBackToLogin() }
+                    modifier = Modifier.clickable {
+                        // Instead of creating a new LoginScreen instance, pop back to it
+                        navController.popBackStack("loginScreen", inclusive = false)
+                    }
                 )
+
             }
         }
     }
@@ -191,24 +210,22 @@ fun SignUpScreen(navController: NavController, onSignUpSuccess: () -> Unit, onBa
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StyledTextField(value: String, placeholder: String, onValueChange: (String) -> Unit) {
-    Box(
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
         modifier = Modifier
             .width(300.dp)
             .height(55.dp)
             .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp))
-            .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
-    ) {
-        TextField(
-            value = value,
-            onValueChange = onValueChange,
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            placeholder = { Text(placeholder, color = Color.White.copy(alpha = 0.6f)) },
-            colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
-        )
-    }
+            .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp)),
+        singleLine = true,
+        placeholder = { Text(placeholder, color = Color.White.copy(alpha = 0.6f)) },
+        colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
+    )
 }
 
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PasswordField(
     placeholder: String,
@@ -217,20 +234,28 @@ fun PasswordField(
     passwordVisible: Boolean,
     onVisibilityChange: (Boolean) -> Unit
 ) {
-    StyledTextField(value, placeholder, onValueChange)
-    Box(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        IconButton(
-            onClick = { onVisibilityChange(!passwordVisible) },
-            modifier = Modifier.align(Alignment.CenterEnd) // ✅ Correct usage inside Box
-        ) {
-            Icon(
-                imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                contentDescription = "Toggle Password Visibility",
-                tint = Color.White
-            )
-        }
-    }
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = Modifier
+            .width(300.dp)
+            .height(55.dp)
+            .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp))
+            .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp)),
+        singleLine = true,
+        placeholder = { Text(placeholder, color = Color.White.copy(alpha = 0.6f)) },
+        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+            val image = if (passwordVisible) R.drawable.visibilityon else R.drawable.visibilityoff
 
+            IconButton(onClick = { onVisibilityChange(!passwordVisible) }) {
+                Icon(
+                    painter = painterResource(id = image),
+                    contentDescription = "Toggle Password Visibility",
+                    tint = Color.White
+                )
+            }
+        },
+        colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
+    )
 }

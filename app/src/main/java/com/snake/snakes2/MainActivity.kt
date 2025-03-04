@@ -55,13 +55,16 @@ class MainActivity : ComponentActivity() {
                             SignUpScreen(
                                 navController = navController, // Pass navController
                                 onSignUpSuccess = {
-                                    navController.navigate("loginScreen") // Navigate to LoginScreen after successful sign-up
+                                    // Go back to LoginScreen **without creating a duplicate instance**
+                                    navController.popBackStack("loginScreen", inclusive = false)
                                 },
                                 onBackToLogin = {
-                                    navController.navigate("loginScreen") // Navigate to LoginScreen when clicking "Already have an account? Log in"
+                                    // Also pop the back stack instead of creating a new LoginScreen
+                                    navController.popBackStack("loginScreen", inclusive = false)
                                 }
                             )
                         }
+
 
                         // 🔹 Home Screen (This will be displayed after a successful login)
                         composable("homeScreen/{username}", arguments = listOf(navArgument("username") { type = androidx.navigation.NavType.StringType })) { backStackEntry ->
