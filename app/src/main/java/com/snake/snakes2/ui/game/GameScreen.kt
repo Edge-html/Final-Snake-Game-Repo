@@ -99,7 +99,7 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel(), navController: NavCon
                 fontSize = 24.sp,
                 modifier = Modifier.padding(bottom = 20.dp)
             )
-
+            //
             Controls { direction ->
                 gameViewModel.changeDirection(direction)
             }
