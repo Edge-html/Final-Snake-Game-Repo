@@ -37,6 +37,7 @@ fun LeaderboardsScreen(navController: NavController, username: String, viewModel
                 }
             )
         },
+        //
         content = { paddingValues ->
             Column(modifier = Modifier.padding(paddingValues)) {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {

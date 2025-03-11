@@ -108,7 +108,7 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel(), navController: NavCon
         }
     }
 }
-
+//
 @Composable
 fun GameOverContent(score: Int, highestScore: Pair<String, Int>, username: String, onRestart: () -> Unit, onGoHome: () -> Unit) {
     val db = FirebaseFirestore.getInstance()

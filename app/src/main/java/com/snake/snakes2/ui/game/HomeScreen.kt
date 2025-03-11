@@ -83,7 +83,7 @@ fun HomeScreen(navController: NavController, username: String) {
                 navController.navigate("leaderboardsScreen/$username")
             }
 
-
+            //
             HomeButton("Settings") {
                 navController.navigate("settingsScreen")
             }
