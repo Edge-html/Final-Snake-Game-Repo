@@ -55,18 +55,27 @@ class GameViewModel : ViewModel() {
             .orderBy("score", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
-                val scores = result.map { doc ->
-                    ScoreEntry(
-                        username = doc.getString("username") ?: "Unknown",
-                        score = doc.getLong("score")?.toInt() ?: 0
-                    )
+                // Create a mutable map to keep track of highest scores for each user
+                val highestScores = mutableMapOf<String, ScoreEntry>()
+
+                result.forEach { document ->
+                    val username = document.getString("username") ?: "Unknown"
+                    val score = document.getLong("score")?.toInt() ?: 0
+
+                    // Check if current score is higher than what is stored for the user
+                    highestScores[username] = highestScores[username]?.let {
+                        if (score > it.score) ScoreEntry(username, score) else it
+                    } ?: ScoreEntry(username, score) // If no score is stored, add current
                 }
-                _allScores.value = scores
+
+                // Convert the map values to a list to update the StateFlow
+                _allScores.value = highestScores.values.toList()
             }
             .addOnFailureListener { e ->
                 Log.e("GameViewModel", "Error loading scores", e)
             }
     }
+
 
     init {
         fetchHighestScore()
@@ -83,6 +92,7 @@ class GameViewModel : ViewModel() {
                     val highest = documents.documents.first()
                     val username = highest.getString("username") ?: "Unknown"
                     val scoreString = highest.get("score")?.toString() ?: "0"
+
 
                     Log.d("GameViewModel", "Retrieved document: username=$username, score=$scoreString")
 

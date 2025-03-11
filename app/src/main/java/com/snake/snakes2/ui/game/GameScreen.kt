@@ -27,6 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 @Composable
 fun GameScreen(gameViewModel: GameViewModel = viewModel(), navController: NavController, username: String) {
     val state by gameViewModel.state.collectAsState()
+    val highestScore by gameViewModel.highestScore.collectAsState()
     val inlandersFont = remember {
         try {
             FontFamily(Font(R.font.inlanders_font, FontWeight.Normal))
@@ -45,12 +46,13 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel(), navController: NavCon
         if (state.gameOver) {
             GameOverContent(
                 score = state.score,
+                highestScore = highestScore ?: Pair("None", 0),
                 username = username, // Pass username here
                 onRestart = {
                     gameViewModel.restartGame()
                 },
                 onGoHome = {
-                    navController.navigate("homeScreen") {
+                    navController.navigate("homeScreen/$username") {
                         popUpTo("gameScreen") { inclusive = true }
                     }
                 }
@@ -108,7 +110,7 @@ fun GameScreen(gameViewModel: GameViewModel = viewModel(), navController: NavCon
 }
 
 @Composable
-fun GameOverContent(score: Int, username: String, onRestart: () -> Unit, onGoHome: () -> Unit) {
+fun GameOverContent(score: Int, highestScore: Pair<String, Int>, username: String, onRestart: () -> Unit, onGoHome: () -> Unit) {
     val db = FirebaseFirestore.getInstance()
 
     // We'll use this to ensure the update only runs once per game over
@@ -138,6 +140,8 @@ fun GameOverContent(score: Int, username: String, onRestart: () -> Unit, onGoHom
         verticalArrangement = Arrangement.Center
     ) {
         Text(text = "Game Over", fontSize = 32.sp, color = Color.White)
+        Text(text = "Your Score: $score", fontSize = 28.sp, color = Color.White)
+        Text(text = "Highest Score: ${highestScore.second} by ${highestScore.first}", fontSize = 24.sp, color = Color.Gray)
 
         Spacer(modifier = Modifier.height(16.dp))
 

@@ -167,8 +167,7 @@ fun SignUpScreen(navController: NavController, onSignUpSuccess: () -> Unit, onBa
                                 val user = hashMapOf(
                                     "Username" to username,
                                     "email" to mail,
-                                    "password" to password,
-                                    "score" to 0
+                                    "password" to password
                                 )
 
                                 db.collection("users")
