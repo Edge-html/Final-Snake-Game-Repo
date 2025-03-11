@@ -1,3 +1,4 @@
+//LoginScreen.kt
 package com.snake.snakes2.ui.login
 
 import android.widget.Toast
@@ -113,7 +114,6 @@ fun LoginScreen(navController: NavController, onLoginSuccess: (Any?) -> Unit, on
                                 .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp)) // Same as "PROCEED" button
                                 .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
                         ) {
-                            //HI HELLO WORld
                             TextField(
                                 value = username,
                                 onValueChange = { username = it },

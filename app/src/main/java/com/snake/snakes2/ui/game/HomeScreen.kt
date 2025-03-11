@@ -1,3 +1,4 @@
+//HomeScreen.kt
 package com.snake.snakes2.ui.game
 
 import android.util.Log
@@ -13,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -21,10 +21,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
 import com.snake.snakes2.R
 
 @Composable
 fun HomeScreen(navController: NavController, username: String) {
+    val auth = FirebaseAuth.getInstance() // Firebase Authentication instance
+
     val inlandersFont = remember {
         try {
             FontFamily(Font(R.font.inlanders_font, FontWeight.Normal))
@@ -33,7 +36,6 @@ fun HomeScreen(navController: NavController, username: String) {
         }
     }
 
-    // Home Screen Layout
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(id = R.drawable.snakedash),
@@ -48,76 +50,52 @@ fun HomeScreen(navController: NavController, username: String) {
             modifier = Modifier
                 .size(350.dp)
                 .align(Alignment.TopCenter)
-                .padding(top = 40.dp) // Adjust to your preferred logo position
+                .padding(top = 40.dp)
         )
 
-        // Welcome message
-        Text(
-            text = "Welcome, $username!",
-            color = Color.White,
-            fontFamily = inlandersFont,
-            fontSize = 24.sp,
-            modifier = Modifier.padding(bottom = 30.dp) // Space between the welcome message and buttons
-        )
-
-        // Buttons layout
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 200.dp), // Adjust padding to place buttons properly
+                .padding(top = 200.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-            // Single Player Button
-            HomeButton(
-                text = "Single Player",
-                onClick = {
-                    Log.d("HomeScreen", "Single Player button clicked")
-                    // Navigate to CountScreen (for countdown)
-                    navController.navigate("countScreen")
-                }
+            // Welcome message
+            Text(
+                text = "Welcome, $username!",
+                color = Color.White,
+                fontFamily = inlandersFont,
+                fontSize = 24.sp,
+                modifier = Modifier.padding(bottom = 20.dp)
             )
 
-            // Multiplayer Button
-            HomeButton(
-                text = "Multiplayer",
-                onClick = {
-                    navController.navigate("multiplayerScreen") // Navigate to Multiplayer screen
-                }
-            )
+            // Buttons
+            HomeButton("Single Player") {
+                Log.d("HomeScreen", "Single Player button clicked")
+                navController.navigate("countScreen/$username") // Ensure username is included in the route
+            }
+            HomeButton("Multiplayer") {
+                navController.navigate("multiplayerScreen")
+            }
 
-            // Leaderboards Button
-            HomeButton(
-                text = "Leaderboards",
-                onClick = {
-                    navController.navigate("leaderboardsScreen") // Navigate to Leaderboards screen
-                }
-            )
+            HomeButton("Leaderboards") {
+                navController.navigate("leaderboardsScreen")
+            }
 
-            // Settings Button
-            HomeButton(
-                text = "Settings",
-                onClick = {
-                    navController.navigate("settingsScreen") // Navigate to Settings screen
-                }
-            )
+            HomeButton("Settings") {
+                navController.navigate("settingsScreen")
+            }
 
-            // Credits Button
-            HomeButton(
-                text = "Credits",
-                onClick = {
-                    navController.navigate("creditsScreen") // Navigate to Credits screen
-                }
-            )
+            HomeButton("Credits") {
+                navController.navigate("creditsScreen")
+            }
 
-            // Logout Button
-            HomeButton(
-                text = "Logout",
-                onClick = {
-                    navController.navigate("loginScreen") // Navigate to Login screen
+            HomeButton("Logout") {
+                auth.signOut() // Logout from Firebase
+                navController.navigate("loginScreen") {
+                    popUpTo("homeScreen") { inclusive = true }
                 }
-            )
+            }
         }
     }
 }
@@ -128,7 +106,7 @@ fun HomeButton(text: String, onClick: () -> Unit) {
         modifier = Modifier
             .background(Color(0xff242c11).copy(alpha = 0.8f), shape = RoundedCornerShape(20.dp))
             .border(2.dp, Color.White, shape = RoundedCornerShape(20.dp))
-            .fillMaxWidth(0.8f) // Adjust width to your design
+            .fillMaxWidth(0.8f)
             .height(60.dp)
             .clickable { onClick() }
             .padding(10.dp),
@@ -137,9 +115,8 @@ fun HomeButton(text: String, onClick: () -> Unit) {
         Text(
             text = text,
             color = Color.White,
-            fontFamily = FontFamily(Font(R.font.inlanders_font, FontWeight.Normal)),
             fontSize = 20.sp,
-            modifier = Modifier.align(Alignment.Center)
+            fontWeight = FontWeight.Bold
         )
     }
 }

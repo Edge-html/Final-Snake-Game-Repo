@@ -1,4 +1,4 @@
-//GameUseCase.kt
+// GameUseCase.kt
 package com.snake.snakes2.domain
 
 import com.snake.snakes2.data.GameState
@@ -11,7 +11,7 @@ import java.util.Random
 class GameUseCase {
     private val mutex = Mutex()
     private val mutableState = MutableStateFlow(
-        GameState(food = Pair(5, 5), snake = listOf(Pair(7, 7)), score = 0)
+        GameState(food = Pair(5, 5), snake = listOf(Pair(7, 7)), score = 0, gameOver = false)
     )
     val state = mutableState
 
@@ -35,13 +35,13 @@ class GameUseCase {
                 )
             }
 
-            // Check if the snake hits itself
             if (mutableState.value.snake.contains(newPosition)) {
-                gameOver = true // Game over if snake touches its body
+                gameOver = true
                 mutableState.update {
                     it.copy(
-                        snake = listOf(Pair(7, 7)), // Reset snake position
-                        score = 0 // Reset score
+                        snake = listOf(Pair(7, 7)),
+                        score = 0,
+                        gameOver = true
                     )
                 }
                 return
@@ -50,34 +50,39 @@ class GameUseCase {
             val isEatingFood = newPosition == mutableState.value.food
 
             if (isEatingFood) {
-                // Increase fruitsEaten count
                 fruitsEaten++
-
-                // Calculate score per fruit (increments every 5 fruits)
                 val pointsPerFruit = 10 + (fruitsEaten / 5) * 5
 
-                // Update state with new food position, increased score
                 mutableState.update {
                     it.copy(
-                        food = Pair(Random().nextInt(BOARD_SIZE), Random().nextInt(BOARD_SIZE)), // New food
+                        food = Pair(Random().nextInt(BOARD_SIZE), Random().nextInt(BOARD_SIZE)),
                         score = it.score + pointsPerFruit
                     )
                 }
-
-                // Speed up the snake's movements
                 speed = (speed * 0.9).toLong().coerceAtLeast(50L)
             }
 
-            // Update snake's body
             val newSnake = listOf(newPosition) + mutableState.value.snake
-
-            // If eating food, keep the full length
             val updatedSnake = if (isEatingFood) newSnake else newSnake.dropLast(1)
 
             mutableState.update {
                 it.copy(snake = updatedSnake)
             }
         }
+    }
+
+    fun restartGame() {
+        mutableState.update {
+            it.copy(
+                food = Pair(5, 5),
+                snake = listOf(Pair(7, 7)),
+                score = 0,
+                gameOver = false
+            )
+        }
+        fruitsEaten = 0
+        speed = 150L
+        gameOver = false
     }
 
     companion object {

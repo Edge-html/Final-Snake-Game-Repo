@@ -41,7 +41,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -49,9 +48,10 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
+    implementation(libs.androidx.material3)  // Ensure this is correct
     implementation(libs.play.services.games)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.firebase.auth.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -60,21 +60,17 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(platform(libs.androidx.compose.bom.v20240100))
-    implementation(libs.ui)
-    implementation(libs.material3)
+    implementation(libs.ui)  // Make sure this is not a duplicate of androidx.ui
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation (libs.androidx.material.icons.extended)
-    implementation("com.google.firebase:firebase-analytics:20.0.0")
+    implementation(libs.androidx.material.icons.extended)
 
-    // Import the Firebase BoM
-    implementation(libs.firebase.bom)
+    // Firebase BoM (Make sure it's up to date)
+    implementation(platform("com.google.firebase:firebase-bom:32.7.3"))  // Update to latest
 
-
-    // TODO: Add the dependencies for Firebase products you want to use
-    // When using the BoM, don't specify versions in Firebase dependencies
+    // Firebase dependencies (No manual version numbers)
     implementation(libs.firebase.analytics)
-    implementation ("com.google.firebase:firebase-firestore-ktx:24.0.0")
-
-
-
+    implementation(libs.firebase.auth.ktx)
+    implementation(libs.firebase.firestore.ktx)
+    implementation("com.google.android.gms:play-services-auth:20.7.0")  // Google Sign-In
+    implementation("com.google.android.gms:play-services-basement:18.2.0")  // Core Play Services
 }

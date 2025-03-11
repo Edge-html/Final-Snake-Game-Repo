@@ -18,19 +18,20 @@ import com.snake.snakes2.data.GameState
 @Composable
 fun Board(state: GameState) {
     BoxWithConstraints(Modifier.padding(16.dp)) {
-        val tileSize = maxWidth / 16 // Adjust BOARD_SIZE if needed
+        // Calculate the tile size based on the available space (width or height)
+        val tileSize = (minOf(maxWidth, maxHeight) / 15) // 15x15 grid
 
-        val imageMaxWidth = maxWidth - 16.dp
+        val imageMaxWidth = maxWidth - 15.dp
         val imageMaxHeight = maxHeight - 16.dp
 
-        val imageHeight = 350.dp // Set height for the background image
+        // Dynamically adjust image size based on the maxWidth or maxHeight
+        val imageHeight = minOf(maxWidth, maxHeight) // Use the smallest dimension
 
-        // Draw the game background image (gamescreenbg) with a white border
+        // Draw the game background image with a white border
         Box(
             modifier = Modifier
-                .fillMaxWidth()  // Ensure the width fills the available space
-                .height(imageHeight) // Set the height for the image
-                .border(4.dp, Color.White)  // Add a white border around the image
+                .width(imageHeight)  // Ensure the width fits the image
+                .height(imageHeight) // Use imageHeight to keep the aspect ratio square
                 .padding(10.dp)  // Add padding around the image
         ) {
             Image(
@@ -66,3 +67,4 @@ fun Board(state: GameState) {
         }
     }
 }
+
