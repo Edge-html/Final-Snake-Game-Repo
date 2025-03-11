@@ -79,8 +79,10 @@ fun HomeScreen(navController: NavController, username: String) {
             }
 
             HomeButton("Leaderboards") {
-                navController.navigate("leaderboardsScreen")
+                Log.d("Leaderboards", "Leaderboards button clicked")
+                navController.navigate("leaderboardsScreen/$username")
             }
+
 
             HomeButton("Settings") {
                 navController.navigate("settingsScreen")

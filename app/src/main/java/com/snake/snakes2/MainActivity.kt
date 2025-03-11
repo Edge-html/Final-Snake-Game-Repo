@@ -6,6 +6,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
@@ -17,6 +19,7 @@ import com.snake.snakes2.ui.game.HomeScreen
 import com.snake.snakes2.ui.game.CountScreen // Import CountScreen
 import com.snake.snakes2.ui.home.LandingScreen
 import com.snake.snakes2.ui.theme.Snakes2Theme
+import com.snake.snakes2.ui.game.LeaderboardsScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,32 +58,37 @@ class MainActivity : ComponentActivity() {
                             SignUpScreen(
                                 navController = navController, // Pass navController
                                 onSignUpSuccess = {
-                                    // Go back to LoginScreen **without creating a duplicate instance**
-                                    navController.popBackStack("loginScreen", inclusive = false)
+                                    navController.navigate("loginScreen") // Navigate to LoginScreen after successful sign-up
                                 },
                                 onBackToLogin = {
-                                    // Also pop the back stack instead of creating a new LoginScreen
-                                    navController.popBackStack("loginScreen", inclusive = false)
+                                    navController.navigate("loginScreen") // Navigate to LoginScreen when clicking "Already have an account? Log in"
                                 }
                             )
                         }
 
-
                         // 🔹 Home Screen (This will be displayed after a successful login)
-                        composable("homeScreen/{username}", arguments = listOf(navArgument("username") { type = androidx.navigation.NavType.StringType })) { backStackEntry ->
+                        composable("homeScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
                             val username = backStackEntry.arguments?.getString("username") ?: ""
-                            HomeScreen(navController = navController, username = username)
+                            HomeScreen(navController, username)
                         }
 
-                        // 🔹 Count Screen for countdown
-                        composable("countScreen") {
-                            CountScreen(navController = navController) // Navigate to countdown screen
+
+                        // 🔹 Count Screen with username parameter
+                        composable("countScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
+                            val username = backStackEntry.arguments?.getString("username") ?: ""
+                            CountScreen(navController = navController, username = username) // Now correctly passing username
                         }
 
-                        // 🔹 Game Screen
-                        composable("gameScreen") {
-                            GameScreen() // Navigate to GameScreen
+                        composable("gameScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
+                            val username = backStackEntry.arguments?.getString("username") ?: ""
+                            GameScreen(navController = navController, username = username)
                         }
+                        composable("leaderboardsScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
+                            val username = backStackEntry.arguments?.getString("username") ?: ""
+                            LeaderboardsScreen(navController = navController, username = username, viewModel = viewModel())
+                        }
+
+
                     }
                 }
             }

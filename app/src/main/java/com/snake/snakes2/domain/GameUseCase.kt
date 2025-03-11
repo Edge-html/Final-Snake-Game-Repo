@@ -1,4 +1,4 @@
-// GameUseCase.kt
+//GameUseCase.kt
 package com.snake.snakes2.domain
 
 import com.snake.snakes2.data.GameState
@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.Random
+import android.util.Log
 
 class GameUseCase {
     private val mutex = Mutex()
@@ -16,10 +17,6 @@ class GameUseCase {
     val state = mutableState
 
     var move = Direction.RIGHT
-        set(value) {
-            field = value
-        }
-
     var speed = 150L
     private var fruitsEaten = 0
     private var gameOver = false
@@ -37,52 +34,46 @@ class GameUseCase {
 
             if (mutableState.value.snake.contains(newPosition)) {
                 gameOver = true
-                mutableState.update {
-                    it.copy(
-                        snake = listOf(Pair(7, 7)),
-                        score = 0,
-                        gameOver = true
-                    )
-                }
+                mutableState.update { it.copy(gameOver = true) }
+                Log.d("GameUseCase", "Game Over: Score = ${mutableState.value.score}")
                 return
             }
 
             val isEatingFood = newPosition == mutableState.value.food
-
-            if (isEatingFood) {
+            val newSnake = listOf(newPosition) + mutableState.value.snake
+            val updatedSnake = if (isEatingFood) {
                 fruitsEaten++
                 val pointsPerFruit = 10 + (fruitsEaten / 5) * 5
-
                 mutableState.update {
                     it.copy(
                         food = Pair(Random().nextInt(BOARD_SIZE), Random().nextInt(BOARD_SIZE)),
                         score = it.score + pointsPerFruit
                     )
                 }
+                Log.d("GameUseCase", "Eating Food: New Score = ${mutableState.value.score}")
                 speed = (speed * 0.9).toLong().coerceAtLeast(50L)
+                newSnake
+            } else {
+                newSnake.dropLast(1)
             }
 
-            val newSnake = listOf(newPosition) + mutableState.value.snake
-            val updatedSnake = if (isEatingFood) newSnake else newSnake.dropLast(1)
-
-            mutableState.update {
-                it.copy(snake = updatedSnake)
-            }
+            mutableState.update { it.copy(snake = updatedSnake) }
         }
     }
 
     fun restartGame() {
+        fruitsEaten = 0
+        speed = 150L
+        gameOver = false
         mutableState.update {
             it.copy(
                 food = Pair(5, 5),
                 snake = listOf(Pair(7, 7)),
-                score = 0,
+                score = 0, // Reset score here
                 gameOver = false
             )
         }
-        fruitsEaten = 0
-        speed = 150L
-        gameOver = false
+        Log.d("GameUseCase", "Game Restarted")
     }
 
     companion object {
