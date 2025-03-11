@@ -1,4 +1,4 @@
-//SignUpScreen.kt
+// SignUpScreen.kt
 package com.snake.snakes2.ui.signup
 
 import android.widget.Toast
@@ -26,22 +26,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.snake.snakes2.R
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import com.snake.snakes2.ui.theme.Snakes2Theme
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.toObject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SignUpScreen(navController: NavController,  onSignUpSuccess: () -> Unit, onBackToLogin: () -> Unit) {
+fun SignUpScreen(navController: NavController, onSignUpSuccess: () -> Unit, onBackToLogin: () -> Unit) {
     val context = LocalContext.current
 
     var name by remember { mutableStateOf("") }
     var mail by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
 
     val inlandersFont = remember {
         try {
@@ -51,7 +50,6 @@ fun SignUpScreen(navController: NavController,  onSignUpSuccess: () -> Unit, onB
         }
     }
 
-    // Firestore reference
     val db = FirebaseFirestore.getInstance()
 
     Snakes2Theme {
@@ -81,7 +79,6 @@ fun SignUpScreen(navController: NavController,  onSignUpSuccess: () -> Unit, onB
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // SIGNUP BOX
                 Box(
                     modifier = Modifier
                         .background(Color(0xff242c11).copy(alpha = 0.8f), shape = RoundedCornerShape(20.dp))
@@ -91,13 +88,11 @@ fun SignUpScreen(navController: NavController,  onSignUpSuccess: () -> Unit, onB
                     Column(
                         modifier = Modifier
                             .width(300.dp)
-                            //.height(400.dp)
                             .wrapContentHeight()
                             .padding(16.dp),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // SIGNUP TITLE
                         Text(
                             text = "SIGN UP",
                             color = Color.White,
@@ -107,165 +102,52 @@ fun SignUpScreen(navController: NavController,  onSignUpSuccess: () -> Unit, onB
                             modifier = Modifier.padding(bottom = 20.dp)
                         )
 
-                        //Spacer(modifier = Modifier.height(10.dp))
-
-                        // Common modifier for uniform size
                         val textFieldSizeModifier = Modifier
                             .width(300.dp)
                             .height(55.dp)
 
-                        // NAME FIELD
-                        Text(
-                            text = "USERNAME",
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
-
+                        Text("USERNAME", color = Color.White, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .then(textFieldSizeModifier)
-                                .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp)) // Same as "PROCEED" button
-                                .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
-                        ) {
-                            TextField(
-                                value = name,
-                                onValueChange = { name = it },
-                                modifier = Modifier.fillMaxWidth(),
-                                singleLine = true,
-                                placeholder = { Text("Enter your name", color = Color.White.copy(alpha = 0.6f)) },
-                                colors = TextFieldDefaults.textFieldColors(
-                                    containerColor = Color.Transparent,
-                                    focusedTextColor = Color.White,
-                                    unfocusedTextColor = Color.White,
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent
-                                )
-                            )
+                        StyledTextField(username, "Enter a username") {
+                            val it = ""
+                            username = it
                         }
-                        Text(
-                            text = "EMAIL",
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
 
+                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Text("EMAIL", color = Color.White, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .then(textFieldSizeModifier)
-                                .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp)) // Same as "PROCEED" button
-                                .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
-                        ) {
-                            TextField(
-                                value = mail,
-                                onValueChange = { mail = it },
-                                modifier = Modifier.fillMaxWidth(),
-                                singleLine = true,
-                                placeholder = { Text("Enter your email", color = Color.White.copy(alpha = 0.6f)) },
-                                colors = TextFieldDefaults.textFieldColors(
-                                    containerColor = Color.Transparent,
-                                    focusedTextColor = Color.White,
-                                    unfocusedTextColor = Color.White,
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent
-                                )
-                            )
+                        StyledTextField(mail, "Enter your email") {
+                            val it = ""
+                            mail = it
                         }
 
                         Spacer(modifier = Modifier.height(15.dp))
 
-                        // USERNAME FIELD
-                        Text(
-                            text = "PASSWORD",
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
-
+                        Text("PASSWORD", color = Color.White, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .then(textFieldSizeModifier)
-                                .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp)) // Same as "PROCEED" button
-                                .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
-                        ) {
-
-                            TextField(
-                                value = username,
-                                onValueChange = { username = it },
-                                modifier = Modifier.fillMaxSize(),
-                                singleLine = true,
-                                placeholder = { Text("Enter a username", color = Color.White.copy(alpha = 0.6f)) },
-                                colors = TextFieldDefaults.textFieldColors(
-                                    containerColor = Color.Transparent,
-                                    focusedTextColor = Color.White,
-                                    unfocusedTextColor = Color.White,
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent
-                                )
-                            )
-                        }
+                        PasswordField(
+                            "Enter a password",
+                            password,
+                            { password = it },
+                            passwordVisible,
+                            { passwordVisible = it }
+                        )
 
                         Spacer(modifier = Modifier.height(15.dp))
 
-                        // PASSWORD FIELD
-                        Text(
-                            text = "CONFIRM PASSWORD",
-                            color = Color.White,
-                            fontSize = 18.sp,
-                            modifier = Modifier.align(Alignment.CenterHorizontally)
-                        )
-
+                        Text("CONFIRM PASSWORD", color = Color.White, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(5.dp))
-
-                        Box(
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .then(textFieldSizeModifier)
-                                .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp)) // Same as "PROCEED" button
-                                .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
-                        ) {
-                            var passwordVisible by remember { mutableStateOf(false) } // Correct state handling
-
-                            TextField(
-                                value = password,
-                                onValueChange = { password = it },
-                                modifier = Modifier.fillMaxWidth(),
-                                singleLine = true,
-                                placeholder = { Text(text = "Enter a password", color = Color.White.copy(alpha = 0.6f)) },
-                                colors = TextFieldDefaults.textFieldColors(
-                                    containerColor = Color.Transparent,
-                                    focusedTextColor = Color.White,
-                                    unfocusedTextColor = Color.White,
-                                    focusedIndicatorColor = Color.Transparent,
-                                    unfocusedIndicatorColor = Color.Transparent
-                                ),
-                                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                                trailingIcon = {
-                                    val image = if (passwordVisible) R.drawable.visibilityon else R.drawable.visibilityoff
-
-                                    IconButton(onClick = { passwordVisible = !passwordVisible }) { // ✅ Correct toggle logic
-                                        Icon(
-                                            painter = painterResource(id = image),
-                                            contentDescription = "Toggle Password Visibility",
-                                            tint = Color.White
-                                        )
-                                    }
-                                }
-                            )
-                        }
+                        PasswordField(
+                            "Confirm your password",
+                            confirmPassword,
+                            { confirmPassword = it },
+                            confirmPasswordVisible,
+                            { confirmPasswordVisible = it }
+                        )
                     }
                 }
 
-                // BUTTON BELOW SIGNUP BOX
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Box(
@@ -277,23 +159,28 @@ fun SignUpScreen(navController: NavController,  onSignUpSuccess: () -> Unit, onB
                 ) {
                     Button(
                         onClick = {
-                            // Save to Firestore
-                            val user = hashMapOf(
-                                "Username" to username,
-                                "email" to name, // Email should be in the "name" field if that's what is expected
-                                "password" to password,
-                                "score" to 0 // Default score value of 0
-                            )
+                            if (username.isBlank() || mail.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
+                                Toast.makeText(context, "All fields are required!", Toast.LENGTH_SHORT).show()
+                            } else if (password != confirmPassword) {
+                                Toast.makeText(context, "Passwords do not match!", Toast.LENGTH_SHORT).show()
+                            } else {
+                                val user = hashMapOf(
+                                    "Username" to username,
+                                    "email" to mail,
+                                    "password" to password,
+                                    "score" to 0
+                                )
 
-                            db.collection("users")
-                                .add(user)
-                                .addOnSuccessListener {
-                                    Toast.makeText(context, "User Registered!", Toast.LENGTH_SHORT).show()
-                                    onSignUpSuccess() // Navigate after success
-                                }
-                                .addOnFailureListener { e ->
-                                    Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
-                                }
+                                db.collection("users")
+                                    .add(user)
+                                    .addOnSuccessListener {
+                                        Toast.makeText(context, "User Registered!", Toast.LENGTH_SHORT).show()
+                                        onSignUpSuccess()
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                                    }
+                            }
                         },
                         modifier = Modifier.fillMaxSize(),
                         colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
@@ -302,22 +189,73 @@ fun SignUpScreen(navController: NavController,  onSignUpSuccess: () -> Unit, onB
                     }
                 }
 
-                // ADD BACK TO LOGIN LINK BELOW BUTTON
                 Spacer(modifier = Modifier.height(15.dp))
 
                 Text(
                     text = "Already have an account? Log in",
-                    color = Color.White, // Link color
+                    color = Color.White,
                     fontSize = 16.sp,
                     textDecoration = TextDecoration.Underline,
                     modifier = Modifier.clickable {
-                        navController.navigate("loginScreen") {
-                            popUpTo("loginScreen") { inclusive = true } // Clears back stack to avoid duplicate LoginScreens
-                            launchSingleTop = true // Prevents multiple instances of LoginScreen
-                        }
+                        // Instead of creating a new LoginScreen instance, pop back to it
+                        navController.popBackStack("loginScreen", inclusive = false)
                     }
                 )
+
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun StyledTextField(value: String, placeholder: String, onValueChange: (String) -> Unit) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = Modifier
+            .width(300.dp)
+            .height(55.dp)
+            .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp))
+            .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp)),
+        singleLine = true,
+        placeholder = { Text(placeholder, color = Color.White.copy(alpha = 0.6f)) },
+        colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
+    )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PasswordField(
+    placeholder: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    passwordVisible: Boolean,
+    onVisibilityChange: (Boolean) -> Unit
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        modifier = Modifier
+            .width(300.dp)
+            .height(55.dp)
+            .background(Color(0xff5e6b38), shape = RoundedCornerShape(8.dp))
+            .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp)),
+        singleLine = true,
+        placeholder = { Text(placeholder, color = Color.White.copy(alpha = 0.6f)) },
+        visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+            val image = if (passwordVisible) R.drawable.visibilityon else R.drawable.visibilityoff
+
+            IconButton(onClick = { onVisibilityChange(!passwordVisible) }) {
+                Icon(
+                    painter = painterResource(id = image),
+                    contentDescription = "Toggle Password Visibility",
+                    tint = Color.White
+                )
+            }
+        },
+        colors = TextFieldDefaults.textFieldColors(containerColor = Color.Transparent)
+    )
 }

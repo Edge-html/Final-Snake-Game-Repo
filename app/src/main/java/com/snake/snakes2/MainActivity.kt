@@ -1,4 +1,4 @@
-// MainActivity.kt
+//MainActivity.kt
 package com.snake.snakes2
 
 import android.os.Bundle
@@ -6,104 +6,80 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.*
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.navigation.NavType
-import com.google.firebase.auth.FirebaseAuth
 import com.snake.snakes2.ui.login.LoginScreen
 import com.snake.snakes2.ui.signup.SignUpScreen
 import com.snake.snakes2.ui.game.GameScreen
 import com.snake.snakes2.ui.game.HomeScreen
-import com.snake.snakes2.ui.game.CountScreen
+import com.snake.snakes2.ui.game.CountScreen // Import CountScreen
 import com.snake.snakes2.ui.home.LandingScreen
 import com.snake.snakes2.ui.theme.Snakes2Theme
 
 class MainActivity : ComponentActivity() {
-    private lateinit var auth: FirebaseAuth // Firebase Authentication
-
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        auth = FirebaseAuth.getInstance()
-
         setContent {
             Snakes2Theme {
-                val navController = rememberNavController()
-
-                val currentUser = auth.currentUser
-                val startDestination = if (currentUser != null) {
-                    "homeScreen/${currentUser.email}"
-                } else {
-                    "landingScreen"
-                }
+                val navController = rememberNavController() // Initialize navigation controller
 
                 Surface {
-                    NavHost(navController = navController, startDestination = startDestination) {
-
-                        // Landing Screen
+                    // Define the NavHost with the HomeScreen after login
+                    NavHost(navController = navController, startDestination = "landingScreen") {
+                        // 🔹 Landing Screen
                         composable("landingScreen") {
-                            LandingScreen(navController = navController)
+                            LandingScreen(navController = navController) // Navigate to LoginScreen when clicked
                         }
 
-                        // Login Screen
+                        // 🔹 Login Screen
                         composable("loginScreen") {
                             LoginScreen(
-                                navController = navController,
+                                navController = navController, // Pass navController
                                 onLoginSuccess = { username ->
+                                    // Navigate to HomeScreen with the username after successful login
                                     navController.navigate("homeScreen/$username") {
-                                        popUpTo("landingScreen") { inclusive = true }
+                                        // This ensures that after navigating to HomeScreen, the user can't go back to the LoginScreen
+                                        popUpTo("loginScreen") { inclusive = true }
                                     }
                                 },
-                                onSignUpClick = { navController.navigate("signUpScreen") }
+                                onSignUpClick = { navController.navigate("signUpScreen") } // Navigate to SignUpScreen
                             )
                         }
 
-                        // Sign-Up Screen
+                        // 🔹 Sign-Up Screen
                         composable("signUpScreen") {
                             SignUpScreen(
-                                navController = navController,
+                                navController = navController, // Pass navController
                                 onSignUpSuccess = {
-                                    navController.navigate("loginScreen")
+                                    // Go back to LoginScreen **without creating a duplicate instance**
+                                    navController.popBackStack("loginScreen", inclusive = false)
                                 },
                                 onBackToLogin = {
-                                    navController.navigate("loginScreen")
+                                    // Also pop the back stack instead of creating a new LoginScreen
+                                    navController.popBackStack("loginScreen", inclusive = false)
                                 }
                             )
                         }
 
-                        // Home Screen
-                        composable(
-                            "homeScreen/{username}",
-                            arguments = listOf(navArgument("username") {
-                                type = NavType.StringType
-                            })
-                        ) { backStackEntry ->
-                            val username =
-                                backStackEntry.arguments?.getString("username") ?: "Guest"
+
+                        // 🔹 Home Screen (This will be displayed after a successful login)
+                        composable("homeScreen/{username}", arguments = listOf(navArgument("username") { type = androidx.navigation.NavType.StringType })) { backStackEntry ->
+                            val username = backStackEntry.arguments?.getString("username") ?: ""
                             HomeScreen(navController = navController, username = username)
                         }
 
-                        // Count Screen
-                        composable(
-                            "countScreen/{username}",
-                            arguments = listOf(navArgument("username") { type = NavType.StringType })
-                        ) { backStackEntry ->
-                            CountScreen(
-                                navController = navController,
-                                username = backStackEntry.arguments?.getString("username") ?: "Guest"
-                            )
+                        // 🔹 Count Screen for countdown
+                        composable("countScreen") {
+                            CountScreen(navController = navController) // Navigate to countdown screen
                         }
 
-                        // Game Screen
-                        composable(
-                            "gameScreen/{username}",
-                            arguments = listOf(navArgument("username") { type = NavType.StringType })
-                        ) { backStackEntry ->
-                            GameScreen(
-                                navController = navController,
-                                username = backStackEntry.arguments?.getString("username") ?: "Guest"
-                            )
+                        // 🔹 Game Screen
+                        composable("gameScreen") {
+                            GameScreen() // Navigate to GameScreen
                         }
                     }
                 }
