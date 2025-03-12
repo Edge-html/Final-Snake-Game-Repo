@@ -8,14 +8,28 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.snake.snakes2.R
+import com.snake.snakes2.viewmodel.GameViewModel
 import kotlinx.coroutines.delay
 
 @Composable
-fun CountScreen(navController: NavController, username: String) {
+fun CountScreen(navController: NavController, username: String, selectedCharacter: Int, viewModel: GameViewModel = viewModel()) {
     var countdown by remember { mutableStateOf(3) }
+
+    val inlandersFont = remember {
+        try {
+            FontFamily(Font(R.font.inlanders_font, FontWeight.Normal))
+        } catch (e: Exception) {
+            FontFamily.Default
+        }
+    }
 
     // Countdown logic
     LaunchedEffect(Unit) {
@@ -24,7 +38,7 @@ fun CountScreen(navController: NavController, username: String) {
             countdown -= 1
         }
         // After countdown ends, navigate to the game screen
-        navController.navigate("gameScreen/$username") { // Pass the username here
+        navController.navigate("gameScreen/$username/$selectedCharacter") { // Pass both username and selected character here
             popUpTo("countScreen") { inclusive = true }
         }
     }
@@ -37,12 +51,18 @@ fun CountScreen(navController: NavController, username: String) {
             .padding(16.dp),
         contentAlignment = Alignment.Center
     ) {
-        Column(modifier = Modifier.fillMaxSize().background(Color.Black).padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-            Text("Ready Player: $username", color = Color.White, fontSize = 24.sp)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0xff242c11))
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text("Ready Player: $username", color = Color.White, fontSize = 24.sp, fontFamily = inlandersFont)
             Spacer(modifier = Modifier.height(20.dp))
             Text("$countdown", color = Color.White, fontSize = 48.sp)
         }
-
-
     }
 }
+

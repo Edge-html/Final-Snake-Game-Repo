@@ -2,12 +2,10 @@
 package com.snake.snakes2.viewmodel
 
 import android.util.Log
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.Firebase
 import com.snake.snakes2.domain.GameUseCase
-import com.snake.snakes2.domain.Direction
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,6 +15,7 @@ import kotlinx.coroutines.launch
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
+import com.snake.snakes2.domain.Direction
 import kotlinx.coroutines.flow.asStateFlow
 data class ScoreEntry(val username: String, val score: Int)
 class GameViewModel : ViewModel() {

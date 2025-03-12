@@ -1,6 +1,6 @@
-//MainActivity.kt
 package com.snake.snakes2
 
+import com.snake.snakes2.ui.game.MechanicsScreen2
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.snake.snakes2.ui.game.CharacterSelectionScreen
 import com.snake.snakes2.ui.login.LoginScreen
 import com.snake.snakes2.ui.signup.SignUpScreen
 import com.snake.snakes2.ui.game.GameScreen
@@ -20,6 +21,8 @@ import com.snake.snakes2.ui.game.CountScreen // Import CountScreen
 import com.snake.snakes2.ui.home.LandingScreen
 import com.snake.snakes2.ui.theme.Snakes2Theme
 import com.snake.snakes2.ui.game.LeaderboardsScreen
+import com.snake.snakes2.ui.game.MechanicsScreen
+import com.snake.snakes2.ui.game.MechanicsScreen3
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,23 +75,66 @@ class MainActivity : ComponentActivity() {
                             HomeScreen(navController, username)
                         }
 
-
                         // 🔹 Count Screen with username parameter
-                        composable("countScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
+                        composable("countScreen/{username}/{selectedCharacter}", arguments = listOf(
+                            navArgument("username") { type = NavType.StringType },
+                            navArgument("selectedCharacter") { type = NavType.IntType }
+                        )) { backStackEntry ->
                             val username = backStackEntry.arguments?.getString("username") ?: ""
-                            CountScreen(navController = navController, username = username) // Now correctly passing username
+                            val selectedCharacter = backStackEntry.arguments?.getInt("selectedCharacter") ?: R.drawable.sprite_anna
+                            CountScreen(navController = navController, username = username, selectedCharacter = selectedCharacter)
                         }
 
-                        composable("gameScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
+
+
+
+//                        composable("gameScreen/{selectedCharacter}/{username}", arguments = listOf(
+//                            navArgument("selectedCharacter") { type = NavType.IntType },
+//                            navArgument("username") { type = NavType.StringType }
+//                        )) { backStackEntry ->
+//                            val selectedCharacter = backStackEntry.arguments?.getInt("selectedCharacter")
+//                            val username = backStackEntry.arguments?.getString("username") ?: ""
+//                            GameScreen(navController = navController, selectedCharacter = selectedCharacter ?: R.drawable.sprite_anna, username = username)
+//                        }
+
+                        composable("gameScreen/{username}/{selectedCharacter}", arguments = listOf(
+                            navArgument("username") { type = NavType.StringType },
+                            navArgument("selectedCharacter") { type = NavType.IntType }
+                        )) { backStackEntry ->
                             val username = backStackEntry.arguments?.getString("username") ?: ""
-                            GameScreen(navController = navController, username = username)
+                            val selectedCharacter = backStackEntry.arguments?.getInt("selectedCharacter")
+                            if (selectedCharacter != null) {
+                                GameScreen(navController = navController, username = username, selectedCharacter = selectedCharacter)
+                            }
                         }
+
+
+
                         composable("leaderboardsScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
                             val username = backStackEntry.arguments?.getString("username") ?: ""
                             LeaderboardsScreen(navController = navController, username = username, viewModel = viewModel())
                         }
 
+                        // 🔹 Mechanics Screen
+                        composable("mechanics3Screen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
+                            val username = backStackEntry.arguments?.getString("username") ?: ""
+                            MechanicsScreen3(navController = navController, username = username, viewModel = viewModel())
+                        }
 
+                        composable("mechanicsScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
+                            val username = backStackEntry.arguments?.getString("username") ?: ""
+                            MechanicsScreen(navController = navController, username = username, viewModel = viewModel())
+                        }
+
+                        composable("mechanics2Screen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
+                            val username = backStackEntry.arguments?.getString("username") ?: ""
+                            MechanicsScreen2(navController = navController, username = username, viewModel = viewModel())
+                        }
+
+                        composable("CharSelScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
+                            val username = backStackEntry.arguments?.getString("username") ?: ""
+                            CharacterSelectionScreen(navController = navController, username = username, viewModel = viewModel())
+                        }
                     }
                 }
             }

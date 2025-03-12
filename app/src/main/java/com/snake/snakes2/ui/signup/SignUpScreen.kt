@@ -1,4 +1,3 @@
-// SignUpScreen.kt
 package com.snake.snakes2.ui.signup
 
 import android.widget.Toast
@@ -41,6 +40,8 @@ fun SignUpScreen(navController: NavController, onSignUpSuccess: () -> Unit, onBa
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
+    val selectedCharacter by remember { mutableIntStateOf(R.drawable.sprite_anna) } // Or whatever the default or selected character is
+
 
     val inlandersFont = remember {
         try {
@@ -69,13 +70,13 @@ fun SignUpScreen(navController: NavController, onSignUpSuccess: () -> Unit, onBa
                 modifier = Modifier
                     .size(350.dp)
                     .align(Alignment.TopCenter)
-                    .padding(top = 53.dp)
+                    .padding(top =30.dp)
             )
 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(top = 110.dp),
+                    .padding(top = 255.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -109,7 +110,7 @@ fun SignUpScreen(navController: NavController, onSignUpSuccess: () -> Unit, onBa
                         Text("USERNAME", color = Color.White, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(5.dp))
                         StyledTextField(username, "Enter a username") {
-                            val it = ""
+//                            val it = ""
                             username = it
                         }
 
@@ -118,7 +119,7 @@ fun SignUpScreen(navController: NavController, onSignUpSuccess: () -> Unit, onBa
                         Text("EMAIL", color = Color.White, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(5.dp))
                         StyledTextField(mail, "Enter your email") {
-                            val it = ""
+//                            val it = ""
                             mail = it
                         }
 
@@ -157,6 +158,7 @@ fun SignUpScreen(navController: NavController, onSignUpSuccess: () -> Unit, onBa
                         .background(Color(0xff5e6b38), shape = RoundedCornerShape(10.dp))
                         .border(2.dp, Color.White, shape = RoundedCornerShape(8.dp))
                 ) {
+                    // After successful registration in SignUpScreen.kt
                     Button(
                         onClick = {
                             if (username.isBlank() || mail.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
@@ -174,6 +176,7 @@ fun SignUpScreen(navController: NavController, onSignUpSuccess: () -> Unit, onBa
                                     .add(user)
                                     .addOnSuccessListener {
                                         Toast.makeText(context, "User Registered!", Toast.LENGTH_SHORT).show()
+                                        navController.navigate("countScreen/$username/$selectedCharacter") // Pass username to CountScreen
                                         onSignUpSuccess()
                                     }
                                     .addOnFailureListener { e ->
@@ -186,6 +189,7 @@ fun SignUpScreen(navController: NavController, onSignUpSuccess: () -> Unit, onBa
                     ) {
                         Text("REGISTER", color = Color.White, fontSize = 18.sp)
                     }
+
                 }
 
                 Spacer(modifier = Modifier.height(15.dp))

@@ -56,7 +56,7 @@ fun HomeScreen(navController: NavController, username: String) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 200.dp),
+                .padding(top = 300.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -65,14 +65,14 @@ fun HomeScreen(navController: NavController, username: String) {
                 text = "Welcome, $username!",
                 color = Color.White,
                 fontFamily = inlandersFont,
-                fontSize = 24.sp,
-                modifier = Modifier.padding(bottom = 20.dp)
+                fontSize = 30.sp,
+                modifier = Modifier.padding(bottom = 10.dp)
             )
 
             // Buttons
             HomeButton("Single Player") {
                 Log.d("HomeScreen", "Single Player button clicked")
-                navController.navigate("countScreen/$username") // Ensure username is included in the route
+                navController.navigate("mechanicsScreen/$username") // Ensure username is included in the route
             }
             HomeButton("Multiplayer") {
                 navController.navigate("multiplayerScreen")
