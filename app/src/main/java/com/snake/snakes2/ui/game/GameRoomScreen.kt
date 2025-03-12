@@ -1,4 +1,3 @@
-//GameRoomScreen.kt
 package com.snake.snakes2.ui.game
 
 import androidx.compose.foundation.Image
@@ -18,6 +17,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
 import com.snake.snakes2.R
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.border
+
 
 @Composable
 fun GameRoomScreen(navController: NavController, gameId: String, username: String) {
@@ -38,7 +41,18 @@ fun GameRoomScreen(navController: NavController, gameId: String, username: Strin
             }
     }
 
-    Box(modifier = Modifier.fillMaxSize().background(Color(0xff242c11))) {
+    val customFont = FontFamily(Font(R.font.score_font, FontWeight.Bold))
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Background image
+        Image(
+            painter = painterResource(id = R.drawable.snakedash),
+            contentDescription = "Background Image",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        // Game Room content
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -46,22 +60,47 @@ fun GameRoomScreen(navController: NavController, gameId: String, username: Strin
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Game Room for Game ID: $gameId", color = Color.White, fontSize = 24.sp)
+            Text(
+                "Game Room for Game ID: $gameId",
+                color = Color.White,
+                fontSize = 24.sp,
+                fontFamily = customFont
+            )
             Spacer(modifier = Modifier.height(8.dp))
-            Text("Host: $username", color = Color.White, fontSize = 24.sp)
-            Text("Players in this room:", color = Color.White, fontSize = 24.sp)
+            Text(
+                "Host: $username",
+                color = Color.White,
+                fontSize = 24.sp,
+                fontFamily = customFont
+            )
+            Text(
+                "Players in this room:",
+                color = Color.White,
+                fontSize = 24.sp,
+                fontFamily = customFont
+            )
             players.forEach { player ->
-                Text(player, style = MaterialTheme.typography.bodyMedium.copy(color = Color.White))
+                Text(
+                    player,
+                    style = MaterialTheme.typography.bodyMedium.copy(color = Color.White)
+                )
             }
 
             Spacer(modifier = Modifier.height(32.dp))
-            Button(onClick = { navController.navigate("multiplayerArena/$gameId/$username") }) {
-                Text("Start Game")
+
+            // Start Game button
+            HomeButton("Start Game") {
+                navController.navigate("multiplayerArena/$gameId/$username")
             }
+
             Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = { navController.navigateUp() }) {
-                Text("Leave Room")
+
+            // Leave Room button
+            HomeButton("Leave Room") {
+                navController.navigateUp()
             }
         }
     }
 }
+
+

@@ -1,4 +1,3 @@
-//JoinGameScreen.kt
 package com.snake.snakes2.ui.game
 
 import androidx.compose.foundation.Image
@@ -10,6 +9,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
@@ -31,6 +33,8 @@ fun JoinGameScreen(navController: NavController, username: String) {
             }
     }
 
+    val customFont = FontFamily(Font(R.font.score_font, FontWeight.Bold))
+
     Box(modifier = Modifier.fillMaxSize().background(Color(0xff242c11))) {
         Image(
             painter = painterResource(id = R.drawable.snakedash),
@@ -47,7 +51,7 @@ fun JoinGameScreen(navController: NavController, username: String) {
         ) {
             Text(
                 "Available Game Sessions",
-                style = MaterialTheme.typography.titleLarge.copy(color = Color.White)
+                style = MaterialTheme.typography.titleLarge.copy(color = Color.White, fontFamily = customFont)
             )
             Spacer(modifier = Modifier.height(24.dp))
 

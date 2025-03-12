@@ -1,4 +1,3 @@
-//MultiplayerScreen.kt
 package com.snake.snakes2.ui.game
 
 import androidx.compose.foundation.Image
@@ -6,10 +5,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -37,11 +36,23 @@ fun MultiplayerScreen(navController: NavController, username: String) {
         }
     }
 
+    val customFont = FontFamily(Font(R.font.score_font, FontWeight.Bold))
+
     Box(modifier = Modifier.fillMaxSize().background(Color(0xff242c11))) {
         Image(
             painter = painterResource(id = R.drawable.snakedash),
             contentDescription = "Background Image",
+            contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
+        )
+
+        Image(
+            painter = painterResource(id = R.drawable.sdlogofinal),
+            contentDescription = "Logo",
+            modifier = Modifier
+                .size(350.dp)
+                .align(Alignment.TopCenter)
+                .padding(top = 53.dp)
         )
 
         Column(
@@ -55,6 +66,7 @@ fun MultiplayerScreen(navController: NavController, username: String) {
                 "Multiplayer Hub",
                 color = Color.White,
                 fontSize = 24.sp,
+                fontFamily = customFont,
                 modifier = Modifier.padding(bottom = 20.dp)
             )
 
@@ -64,4 +76,3 @@ fun MultiplayerScreen(navController: NavController, username: String) {
         }
     }
 }
-
