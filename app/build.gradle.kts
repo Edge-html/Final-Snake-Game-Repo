@@ -71,6 +71,6 @@ dependencies {
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore.ktx)
-    implementation("com.google.android.gms:play-services-auth:20.7.0")  // Google Sign-In
-    implementation("com.google.android.gms:play-services-basement:18.2.0")  // Core Play Services
+    implementation("com.google.android.gms:play-services-auth:21.3.0")  // Google Sign-In
+    implementation("com.google.android.gms:play-services-basement:18.5.0")  // Core Play Services
 }

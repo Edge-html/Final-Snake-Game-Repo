@@ -1,6 +1,6 @@
+//MainActivity.kt
 package com.snake.snakes2
 
-import com.snake.snakes2.ui.game.MechanicsScreen2
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,7 +12,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.snake.snakes2.ui.game.CharacterSelectionScreen
 import com.snake.snakes2.ui.login.LoginScreen
 import com.snake.snakes2.ui.signup.SignUpScreen
 import com.snake.snakes2.ui.game.GameScreen
@@ -21,8 +20,17 @@ import com.snake.snakes2.ui.game.CountScreen // Import CountScreen
 import com.snake.snakes2.ui.home.LandingScreen
 import com.snake.snakes2.ui.theme.Snakes2Theme
 import com.snake.snakes2.ui.game.LeaderboardsScreen
+import com.snake.snakes2.ui.game.MultiplayerScreen
+import com.snake.snakes2.ui.game.GameRoomScreen
+import com.snake.snakes2.ui.game.JoinGameScreen
+import com.snake.snakes2.ui.game.MultiplayerArena
+import com.snake.snakes2.ui.game.MultiplayerGameScreen
 import com.snake.snakes2.ui.game.MechanicsScreen
+import com.snake.snakes2.ui.game.MechanicsScreen2
 import com.snake.snakes2.ui.game.MechanicsScreen3
+import com.snake.snakes2.ui.game.CharacterSelectionScreen
+import com.snake.snakes2.viewmodel.MultiplayerGameViewModel
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,44 +83,72 @@ class MainActivity : ComponentActivity() {
                             HomeScreen(navController, username)
                         }
 
+
                         // 🔹 Count Screen with username parameter
                         composable("countScreen/{username}/{selectedCharacter}", arguments = listOf(
                             navArgument("username") { type = NavType.StringType },
-                            navArgument("selectedCharacter") { type = NavType.IntType }
+                            navArgument("selectedCharacter") { type = NavType.StringType }
                         )) { backStackEntry ->
                             val username = backStackEntry.arguments?.getString("username") ?: ""
-                            val selectedCharacter = backStackEntry.arguments?.getInt("selectedCharacter") ?: R.drawable.sprite_anna
+                            val selectedCharacter = backStackEntry.arguments?.getString("selectedCharacter") ?: ""
                             CountScreen(navController = navController, username = username, selectedCharacter = selectedCharacter)
                         }
 
 
+                        composable("gameScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
+                            val username = backStackEntry.arguments?.getString("username") ?: ""
+                            GameScreen(navController = navController, username = username)
+                        }
+                        composable("leaderboardsScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
+                            val username = backStackEntry.arguments?.getString("username") ?: ""
+                            LeaderboardsScreen(navController = navController, username = username, viewModel = viewModel())
+                        }
+                        composable("multiplayerScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
+                            val username = backStackEntry.arguments?.getString("username") ?: ""
+                            MultiplayerScreen(navController = navController, username = username)
+                        }
 
+                        //MULTIPLAYER
+                        composable("gameRoom/{gameId}/{username}", arguments = listOf(
+                            navArgument("gameId") { type = NavType.StringType },
+                            navArgument("username") { type = NavType.StringType }
+                        )) { backStackEntry ->
+                            val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
+                            val username = backStackEntry.arguments?.getString("username") ?: ""
+                            GameRoomScreen(navController, gameId, username)  // Implement this Composable to handle the game room
+                        }
 
-//                        composable("gameScreen/{selectedCharacter}/{username}", arguments = listOf(
-//                            navArgument("selectedCharacter") { type = NavType.IntType },
-//                            navArgument("username") { type = NavType.StringType }
-//                        )) { backStackEntry ->
-//                            val selectedCharacter = backStackEntry.arguments?.getInt("selectedCharacter")
-//                            val username = backStackEntry.arguments?.getString("username") ?: ""
-//                            GameScreen(navController = navController, selectedCharacter = selectedCharacter ?: R.drawable.sprite_anna, username = username)
-//                        }
-
-                        composable("gameScreen/{username}/{selectedCharacter}", arguments = listOf(
-                            navArgument("username") { type = NavType.StringType },
-                            navArgument("selectedCharacter") { type = NavType.IntType }
+                        composable("joinGameScreen/{username}", arguments = listOf(
+                            navArgument("username") { type = NavType.StringType }
                         )) { backStackEntry ->
                             val username = backStackEntry.arguments?.getString("username") ?: ""
-                            val selectedCharacter = backStackEntry.arguments?.getInt("selectedCharacter")
-                            if (selectedCharacter != null) {
-                                GameScreen(navController = navController, username = username, selectedCharacter = selectedCharacter)
-                            }
+                            JoinGameScreen(navController, username)  // Implement this Composable to handle joining games
+                        }
+
+                        composable("multiplayerGameScreen/{gameId}/{username}", arguments = listOf(
+                            navArgument("gameId") { type = NavType.StringType },
+                            navArgument("username") { type = NavType.StringType }
+                        )) { backStackEntry ->
+                            val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
+                            val username = backStackEntry.arguments?.getString("username") ?: ""
+                            MultiplayerGameScreen(navController = navController, gameId = gameId, username = username)
                         }
 
 
 
-                        composable("leaderboardsScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
+
+
+
+                        composable(
+                            route = "multiplayerArena/{gameId}/{username}",
+                            arguments = listOf(
+                                navArgument("gameId") { type = NavType.StringType },
+                                navArgument("username") { type = NavType.StringType }
+                            )
+                        ) { backStackEntry ->
+                            val gameId = backStackEntry.arguments?.getString("gameId") ?: ""
                             val username = backStackEntry.arguments?.getString("username") ?: ""
-                            LeaderboardsScreen(navController = navController, username = username, viewModel = viewModel())
+                            MultiplayerArena(navController, gameId, username)  // Now passing username along with gameId
                         }
 
                         // 🔹 Mechanics Screen
@@ -130,11 +166,13 @@ class MainActivity : ComponentActivity() {
                             val username = backStackEntry.arguments?.getString("username") ?: ""
                             MechanicsScreen2(navController = navController, username = username, viewModel = viewModel())
                         }
-
                         composable("CharSelScreen/{username}", arguments = listOf(navArgument("username") { type = NavType.StringType })) { backStackEntry ->
                             val username = backStackEntry.arguments?.getString("username") ?: ""
                             CharacterSelectionScreen(navController = navController, username = username, viewModel = viewModel())
                         }
+
+
+
                     }
                 }
             }

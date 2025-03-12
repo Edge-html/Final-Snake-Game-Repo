@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Snakes2</string>
+    <string name="default_web_client_id">498705386034-0gc118p37qtt892kg4vigat00tnb5ufd.apps.googleusercontent.com</string>
+
 </resources>
